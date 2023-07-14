@@ -16,7 +16,7 @@
         <TextBlock HorizontalAlignment="Left" Margin="67,247,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="153" Width="673" Background="#FFFBF6F6"/>
         <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,212,0,0" VerticalAlignment="Top" Width="245"/>
         <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="207,49,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold"/>
-        <Button Content="&lt;unassigned&gt;" HorizontalAlignment="Left" Margin="390,52,0,0" VerticalAlignment="Top" Width="122" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648"/>
+        <Button x:Name="Button_CxnState" Content="&lt;unassigned&gt;" HorizontalAlignment="Left" Margin="390,52,0,0" VerticalAlignment="Top" Width="122" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
         <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="522,89,0,0" TextWrapping="Wrap" Text="serverIpAddr,port" VerticalAlignment="Top" Width="207"/>
         <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="323,85,0,0" VerticalAlignment="Top" Width="199"/>
         <Label Content="Enter Server Port" HorizontalAlignment="Left" Margin="323,109,0,0" VerticalAlignment="Top" Width="199"/>

@@ -14,9 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 
-using System.Net.Sockets;    
-
-
+using System.Net.Sockets;
+using System.Threading;
 
 namespace Chat
 {
@@ -55,10 +54,13 @@ namespace Chat
             else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
             {
                 tcpClass tcpInstance = new tcpClass( "server", tcp_client_ip_addr_port_string.Text.ToString(), tcp_server_port_string.Text.ToString());
+
+                //Button_CxnState.Background = Brushes.Green;
+
                 tcpInstance.initiate_connection_tcp_server();
 
 
-
+                
 
 
             }
@@ -92,7 +94,7 @@ namespace Chat
 
                 Console.WriteLine("client_ip: " + client_ip + " client_port: " + client_port);
 
-
+                
             }
 
 
@@ -120,8 +122,55 @@ namespace Chat
                 listener.Bind(ipEndPoint);
                 listener.Listen(1000);
 
-                var handler = await listener.AcceptAsync();
 
+                
+
+                for (; ; )
+                {
+
+                    
+
+                    bool result = listener.Poll(1000, SelectMode.SelectRead);
+
+                    bool result_connected = listener.Connected;
+
+
+                    if ( result == true )
+                    {
+                       Console.WriteLine("socketIsReadble!");
+
+                       
+
+
+                    }
+                    //if (result_connected == true)
+                    //{
+                    //    Console.WriteLine("socketIsConnected!");
+                    //}
+
+
+                    DateTime NOW = DateTime.Now;
+                    DateTime NOW_PLUS = NOW.AddSeconds(5);
+                    for(; ; )
+                    {
+                        if ( NOW >= NOW_PLUS) { break; }
+                    }
+
+                    
+
+                }
+                
+                
+
+
+
+
+
+
+                //var handler = await listener.AcceptAsync();
+
+
+                /*
                 
                 while (true)
                 {
@@ -133,7 +182,7 @@ namespace Chat
                     var response = Encoding.UTF8.GetString(buffer, 0, received);
 
                     var eom = "<|EOM|>";
-                    if (response.IndexOf(eom) > -1 /* is end of message */)
+                    if (response.IndexOf(eom) > -1 )
                     {
                         Console.WriteLine(
                             $"Socket server received message: \"{response.Replace(eom, "")}\"");
@@ -151,7 +200,7 @@ namespace Chat
 
 
                 }
-
+                */
 
 
 
@@ -179,7 +228,7 @@ namespace Chat
 
 
 
-
+                
 
 
 
@@ -246,6 +295,11 @@ namespace Chat
         }
 
         private void Checkbox_tcp_server_checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_CxnState_Click(object sender, RoutedEventArgs e)
         {
 
         }
