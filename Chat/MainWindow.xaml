@@ -18,7 +18,7 @@
         <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="207,49,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold"/>
         <Button x:Name="Button_CxnState" Content="&lt;unassigned&gt;" HorizontalAlignment="Left" Margin="390,52,0,0" VerticalAlignment="Top" Width="122" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
         <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="522,89,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="207" Text="192.168.0.54,1000"/>
-        <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="323,85,0,0" VerticalAlignment="Top" Width="199"/>
+        <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="323,85,0,0" VerticalAlignment="Top" Width="199" ToolTip="Enter IPv4 Local Host Address,Port"/>
         <Button Content="Click to Initiate Tcp" HorizontalAlignment="Left" Margin="326,131,0,0" VerticalAlignment="Top" Width="156" Click="Button_Click_Intitiate_tcp" FontWeight="Bold"/>
         <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="527,105,0,0" VerticalAlignment="Top" Width="176"/>
         <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="400,185,0,0" VerticalAlignment="Top" Width="186" FontWeight="Bold"/>

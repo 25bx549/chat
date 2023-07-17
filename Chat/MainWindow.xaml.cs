@@ -41,7 +41,7 @@ namespace Chat
 
             InitializeComponent();
 
-            this.Title = "Secret Chat";
+            this.Title = "System.Net.Sockets - Run as a client or server for raw messaging with another endpoint!";
             
 
             StatusButton = Button_CxnState;
@@ -203,29 +203,22 @@ namespace Chat
 
                 }
 
+
+                Console.WriteLine(" Now setting-up listener.AcceptAsync()");
+
                 var handler = await listener.AcceptAsync();
-                
                 
                 while (true)
                 {
                     // Receive message.
                     var buffer = new byte[1_024];
-
-
                     var receiveArgs = new SocketAsyncEventArgs();
                     receiveArgs.SetBuffer(buffer,0,1024);
+                   
+                    //var received = handler.ReceiveAsync(receiveArgs);
+                    var received = handler.Receive( buffer );
 
-
-                    //var received = await handler.ReceiveAsync(receiveArgs);
-                    var received = handler.ReceiveAsync(receiveArgs);
-
-
-                    handler.Receive(buffer, SocketFlags.None );
-
-                    //var response = Encoding.UTF8.GetString(buffer, 0, received);
                     var response = Encoding.UTF8.GetString(buffer);
-
-
 
                     Console.WriteLine( " printing response: " + response);
                     Console.WriteLine( " printing buffr: " + buffer);
@@ -233,12 +226,8 @@ namespace Chat
 
                     TB_local.Text = response;
 
-                    
 
-
-
-
-                    //_local. = response;
+                    break;
 
                     /*
                     var eom = "<|EOM|>";
@@ -248,7 +237,6 @@ namespace Chat
 
                         var ackMessage = "<|ACK|>";
                         var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
-
 
                         handler.SendAsync(echoBytes, 0);
 
@@ -260,6 +248,8 @@ namespace Chat
                     */
                     //break;
 
+
+                    /*
                     DateTime NOW = DateTime.Now;
                     DateTime NOW_PLUS = NOW.AddSeconds(5);
                     for (; ; )
@@ -280,6 +270,7 @@ namespace Chat
                        // }
 
                     }
+                    */
 
 
                 }
@@ -392,7 +383,7 @@ namespace Chat
 
                     Console.WriteLine($"Socket client sent message: \"{message}\"");
 
-
+                    break;
 
 
 
@@ -414,6 +405,8 @@ namespace Chat
                     //     Socket client sent message: "Hi friends 👋!<|EOM|>"
                     //     Socket client received acknowledgment: "<|ACK|>"
 
+
+                    /*
                     DateTime NOW = DateTime.Now;
                     DateTime NOW_PLUS = NOW.AddSeconds(5);
                     for (; ; )
@@ -434,7 +427,7 @@ namespace Chat
                         }
 
                     }
-
+                    */
 
 
                 }
@@ -468,8 +461,6 @@ namespace Chat
             {
 
 
-
-
                 return true;
             }
 
@@ -496,13 +487,8 @@ namespace Chat
         private void Button_Click_Send(object sender, RoutedEventArgs e)
         {
 
-
-
-
-
         }
 
-        
 
         private void RadioButton_Checked_tcp(object sender, RoutedEventArgs e)
         {
