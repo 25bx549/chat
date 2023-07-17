@@ -16,6 +16,10 @@ using System.Windows.Shapes;
 
 using System.Net.Sockets;
 using System.Threading;
+using System.Windows.Threading;
+using System.Security.Cryptography.X509Certificates;
+using System.Net;
+//using static System.Net.Mime.MediaTypeNames;
 
 namespace Chat
 {
@@ -25,12 +29,26 @@ namespace Chat
     public partial class MainWindow : Window
     {
 
+        // https://stackoverflow.com/questions/33680398/c-sharp-wpf-how-to-simply-update-ui-from-another-class-thread
+        public static Button StatusButton;
+        public static TextBlock TB_local;
+
+        
 
 
         public MainWindow()
         {
 
             InitializeComponent();
+
+            this.Title = "Secret Chat";
+            
+
+            StatusButton = Button_CxnState;
+            //TB_local = TextBox_enterMessage;
+            TB_local = TextBlock_messages;
+
+            TB_local.Text = "ja ja ja";
 
         }
 
@@ -44,16 +62,18 @@ namespace Chat
 
             if ( Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true )
             {
-                tcpClass tcpInstance = new tcpClass( "client", tcp_client_ip_addr_port_string.Text.ToString(), tcp_server_port_string.Text.ToString() );
+                tcpClass tcpInstance = new tcpClass( "client", tcp_client_ip_addr_port_string.Text.ToString() );
                 tcpInstance.initiate_connection_tcp_client();
 
+
+                //Button_CxnState.Background = Brushes.Green;
 
 
 
             }
             else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
             {
-                tcpClass tcpInstance = new tcpClass( "server", tcp_client_ip_addr_port_string.Text.ToString(), tcp_server_port_string.Text.ToString());
+                tcpClass tcpInstance = new tcpClass( "server", tcp_client_ip_addr_port_string.Text.ToString() );
 
                 //Button_CxnState.Background = Brushes.Green;
 
@@ -80,9 +100,11 @@ namespace Chat
             string client_port;
 
             string server_port { get; set; }
+            
 
 
-            public tcpClass(string role, string client_ip_and_port, string server_port)
+
+            public tcpClass(string role, string client_ip_and_port )
             {
                 this.role = role;
                 this.client_ip_and_port = client_ip_and_port;
@@ -120,93 +142,153 @@ namespace Chat
 
                 Socket listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 listener.Bind(ipEndPoint);
-                listener.Listen(1000);
+                listener.Listen( 1000 );
 
-
-                
-
+                //  wait for connection to be established...
                 for (; ; )
                 {
 
-                    
+                    Console.WriteLine(" Next iteration...");
 
-                    bool result = listener.Poll(1000, SelectMode.SelectRead);
+                    bool result_read = listener.Poll(1000, SelectMode.SelectRead);
+                    //bool result_write = listener.Poll(1000, SelectMode.SelectWrite);
 
                     bool result_connected = listener.Connected;
 
 
-                    if ( result == true )
+                    if (result_read == true) 
+                    //if ( ( result_read == true ) && ( result_write == true ) )
                     {
-                       Console.WriteLine("socketIsReadble!");
+                        //Console.WriteLine("socket Is Readble and Writable!");
+                        Console.WriteLine("socket Is Readble!");
 
-                       
+
+                        //App.Current.Dispatcher.Invoke(delegate {
+                        //    Button_CxnState.Background = Brushes.Green;
+                        //});
 
 
+                        StatusButton.Background = Brushes.Green;
+                        StatusButton.Content = "Connected!";
+
+                        TB_local.Text = "ARGH!!!";
+                        
+                        //Button_CxnState.Background = Brushes.Green;
+
+
+
+
+                        break;
                     }
-                    //if (result_connected == true)
-                    //{
-                    //    Console.WriteLine("socketIsConnected!");
-                    //}
-
 
                     DateTime NOW = DateTime.Now;
                     DateTime NOW_PLUS = NOW.AddSeconds(5);
                     for(; ; )
                     {
-                        if ( NOW >= NOW_PLUS) { break; }
+
+                        NOW = DateTime.Now;
+
+                        if ( NOW >= NOW_PLUS) {
+
+                            Console.WriteLine(" Next delay iteration...");
+
+                            break; 
+                        }
+                        //else
+                        //{
+                        //    Thread.Sleep(4000);
+                        //}
+
                     }
 
-                    
-
                 }
+
+                var handler = await listener.AcceptAsync();
                 
-                
-
-
-
-
-
-
-                //var handler = await listener.AcceptAsync();
-
-
-                /*
                 
                 while (true)
                 {
                     // Receive message.
                     var buffer = new byte[1_024];
 
-                    var received = await handler.ReceiveAsync(buffer, SocketFlags.None);
 
-                    var response = Encoding.UTF8.GetString(buffer, 0, received);
+                    var receiveArgs = new SocketAsyncEventArgs();
+                    receiveArgs.SetBuffer(buffer,0,1024);
 
+
+                    //var received = await handler.ReceiveAsync(receiveArgs);
+                    var received = handler.ReceiveAsync(receiveArgs);
+
+
+                    handler.Receive(buffer, SocketFlags.None );
+
+                    //var response = Encoding.UTF8.GetString(buffer, 0, received);
+                    var response = Encoding.UTF8.GetString(buffer);
+
+
+
+                    Console.WriteLine( " printing response: " + response);
+                    Console.WriteLine( " printing buffr: " + buffer);
+
+
+                    TB_local.Text = response;
+
+                    
+
+
+
+
+                    //_local. = response;
+
+                    /*
                     var eom = "<|EOM|>";
                     if (response.IndexOf(eom) > -1 )
                     {
-                        Console.WriteLine(
-                            $"Socket server received message: \"{response.Replace(eom, "")}\"");
+                        Console.WriteLine($"Socket server received message: \"{response.Replace(eom, "")}\"");
 
                         var ackMessage = "<|ACK|>";
                         var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
+
+
                         handler.SendAsync(echoBytes, 0);
+
                         Console.WriteLine(
                             $"Socket server sent acknowledgment: \"{ackMessage}\"");
 
                         break;
                     }
+                    */
+                    //break;
 
+                    DateTime NOW = DateTime.Now;
+                    DateTime NOW_PLUS = NOW.AddSeconds(5);
+                    for (; ; )
+                    {
 
+                        NOW = DateTime.Now;
+
+                        if (NOW >= NOW_PLUS)
+                        {
+
+                            Console.WriteLine(" Next delay iteration...");
+
+                            break;
+                        }
+                        //else
+                        //{
+                        //    Thread.Sleep(4000);
+                       // }
+
+                    }
 
 
                 }
-                */
-
-
-
 
                 return;
             }
+
+
+
 
             public bool initiate_connection_tcp_client()
             {
@@ -228,7 +310,150 @@ namespace Chat
 
 
 
+
+
+
+                for (; ; )
+                {
+
+                    Console.WriteLine(" Next iteration...");
+
+                    //bool result_read = client.Poll(1000, SelectMode.SelectRead);
+                    //bool result_write = listener.Poll(1000, SelectMode.SelectWrite);
+
+                    bool result_connected = client.Connected;
+
+
+                    if (result_connected == true)
+                    //if ( ( result_read == true ) && ( result_write == true ) )
+                    {
+                        //Console.WriteLine("socket Is Readble and Writable!");
+                        Console.WriteLine("socket Is Connected!");
+
+
+                        //App.Current.Dispatcher.Invoke(delegate {
+                        //    Button_CxnState.Background = Brushes.Green;
+                        //});
+
+
+                        StatusButton.Background = Brushes.Green;
+                        StatusButton.Content = "Connected!";
+
+
+
+                        //Button_CxnState.Background = Brushes.Green;
+
+
+
+
+                        break;
+                    }
+
+                    DateTime NOW = DateTime.Now;
+                    DateTime NOW_PLUS = NOW.AddSeconds(5);
+                    for (; ; )
+                    {
+
+                        NOW = DateTime.Now;
+
+                        if (NOW >= NOW_PLUS)
+                        {
+
+                            Console.WriteLine(" Next delay iteration...");
+
+                            break;
+                        }
+                        else
+                        {
+                            Thread.Sleep(4000);
+                        }
+
+                    }
+
+                }
+
+
                 
+                while (true)
+                {
+                    // Send message.
+                    var message = "Hi friends 👋!<|EOM|>";
+
+                    var messageBytes = Encoding.UTF8.GetBytes(message);
+
+                    var sendArgs = new SocketAsyncEventArgs();
+
+                    client.Send(messageBytes, SocketFlags.None);
+
+                    
+
+                    //_ = await client.SendAsync(messageBytes, SocketFlags.None);
+                    //_ = client.SendAsync(messageBytes, SocketFlags.None);
+
+                    Console.WriteLine($"Socket client sent message: \"{message}\"");
+
+
+
+
+
+                    /*
+                    // Receive ack.
+                    var buffer = new byte[1_024];
+                    var received = await client.ReceiveAsync(buffer, SocketFlags.None);
+                    var response = Encoding.UTF8.GetString(buffer, 0, received);
+                    if (response == "<|ACK|>")
+                    {
+                        Console.WriteLine(
+                            $"Socket client received acknowledgment: \"{response}\"");
+                        break;
+                    }
+                    */
+
+
+                    // Sample output:
+                    //     Socket client sent message: "Hi friends 👋!<|EOM|>"
+                    //     Socket client received acknowledgment: "<|ACK|>"
+
+                    DateTime NOW = DateTime.Now;
+                    DateTime NOW_PLUS = NOW.AddSeconds(5);
+                    for (; ; )
+                    {
+
+                        NOW = DateTime.Now;
+
+                        if (NOW >= NOW_PLUS)
+                        {
+
+                            Console.WriteLine(" Next delay iteration...");
+
+                            break;
+                        }
+                        else
+                        {
+                            Thread.Sleep(4000);
+                        }
+
+                    }
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -299,7 +524,12 @@ namespace Chat
 
         }
 
-        private void Button_CxnState_Click(object sender, RoutedEventArgs e)
+        public void Button_CxnState_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_enterMessage_TextChanged(object sender, TextChangedEventArgs e)
         {
 
         }
