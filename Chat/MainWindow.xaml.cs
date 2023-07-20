@@ -22,9 +22,16 @@ using System.Net;
 //using static System.Net.Mime.MediaTypeNames;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.Net.Mime.MediaTypeNames;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace Chat
 {
+
+
+    
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -37,6 +44,19 @@ namespace Chat
         public static TextBlock TB_local;
 
 
+        public bool tcp;
+        public bool tcp_client;
+        public bool tcp_server;
+
+        public static Socket listener = null;
+        public static Socket client = null;
+
+        public tcpClass tcpInstance;
+
+        System.Threading.Thread t1;
+        //Thread t2;
+
+        //public static Socket handler = null;
 
 
         public MainWindow()
@@ -54,6 +74,19 @@ namespace Chat
 
             //TB_local.Text = "ja ja ja";
 
+
+
+            
+
+
+
+
+
+
+
+
+
+
         }
 
 
@@ -62,27 +95,45 @@ namespace Chat
         {
 
 
+
+            //bool tcp;
+            //bool tcp_client;
+            //bool tcp_server;
+
+            //  deal with GUI controls of Main thread
+            System.Windows.Application.Current.Dispatcher.Invoke( DispatcherPriority.Normal, (ThreadStart)delegate 
+            {
+                if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+                {
+                    tcp = true;
+                    tcp_client = true;
+                }
+                else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+                {
+                    tcp = true;
+                    tcp_server = true;
+                }
+            });
+
+
             //  collect config settings from UI to determine which of server/client to run...
 
-            if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            //if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            if (tcp == true && tcp_client == true)
             {
-                tcpClass tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
+                //tcpClass tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
+                tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
                 tcpInstance.initiate_connection_tcp_client();
-
-
-                //Button_CxnState.Background = Brushes.Green;
 
 
 
             }
-            else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            //else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            else if (tcp == true && tcp_server == true)
             {
-                tcpClass tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
-
-                //Button_CxnState.Background = Brushes.Green;
-
+                //tcpClass tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
+                tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
                 tcpInstance.initiate_connection_tcp_server();
-
 
 
 
@@ -93,7 +144,7 @@ namespace Chat
         }
 
 
-        class tcpClass
+        public class tcpClass
         {
 
             //  data
@@ -105,8 +156,10 @@ namespace Chat
 
             string server_port { get; set; }
 
+            bool result_read;
+            bool result_write;
 
-
+            public Socket handler = null;
 
             public tcpClass(string role, string client_ip_and_port)
             {
@@ -144,7 +197,8 @@ namespace Chat
 
 
 
-                Socket listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                //Socket listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 listener.Bind(ipEndPoint);
                 listener.Listen(1000);
 
@@ -152,19 +206,31 @@ namespace Chat
                 for (; ; )
                 {
 
-                    Console.WriteLine(" Next iteration...");
+                    Console.WriteLine(" Starting next connection attempt iteration...");
 
-                    bool result_read = listener.Poll(1000, SelectMode.SelectRead);
-                    //bool result_write = listener.Poll(1000, SelectMode.SelectWrite);
 
-                    bool result_connected = listener.Connected;
+
+
+                    //  this is necessary as for some reason listener.Connected does not seem to work for a tcp server role 
+                    result_read = listener.Poll(1000, SelectMode.SelectRead);
+                    Console.WriteLine(" result_read: " + result_read);
+                    // for some reason SelectMode.SelectWrite does not return true after socket is set to a listen state
+                    result_write = listener.Poll(1000, SelectMode.SelectWrite);
+                    Console.WriteLine(" result_write: " + result_write);
+
+
+
+                    //  skip this as it does not seem to work for a tcp server role
+                    //bool result_connected = listener.Connected;
 
 
                     if (result_read == true)
-
+                    //if ( (result_read == true) && (result_write == true) )
+                    //if ( result_connected == true)
                     {
                         //Console.WriteLine("socket Is Readble and Writable!");
-                        Console.WriteLine("socket Is Readble!");
+                        //Console.WriteLine("socket Is Readble!");
+                        Console.WriteLine("socket Is Connected!");
 
                         StatusButton.Background = Brushes.Green;
 
@@ -172,6 +238,8 @@ namespace Chat
 
                         TB_local.Text = "Initializing...";
 
+
+                        Console.WriteLine("StatusButton should have updated by now.");
 
                         break;
                     }
@@ -185,7 +253,7 @@ namespace Chat
 
                         if (NOW >= NOW_PLUS) {
 
-                            Console.WriteLine(" Next delay iteration...");
+                            Console.WriteLine(" Delaying loop for 5 seconds, before next connect attempt iteration...");
 
                             break;
                         }
@@ -201,7 +269,13 @@ namespace Chat
 
                 Console.WriteLine(" Now setting-up listener.AcceptAsync()");
 
-                var handler = await listener.AcceptAsync();
+                //var handler = await listener.AcceptAsync();
+                handler = await listener.AcceptAsync();
+
+
+
+
+                /*
 
                 while (true)
                 {
@@ -243,34 +317,48 @@ namespace Chat
                         break;
                     }
                     */
-                    //break;
+                //break;
 
 
-                    /*
-                    DateTime NOW = DateTime.Now;
-                    DateTime NOW_PLUS = NOW.AddSeconds(5);
-                    for (; ; )
+                /*
+                DateTime NOW = DateTime.Now;
+                DateTime NOW_PLUS = NOW.AddSeconds(5);
+                for (; ; )
+                {
+
+                    NOW = DateTime.Now;
+
+                    if (NOW >= NOW_PLUS)
                     {
 
-                        NOW = DateTime.Now;
+                        Console.WriteLine(" Next delay iteration...");
 
-                        if (NOW >= NOW_PLUS)
-                        {
-
-                            Console.WriteLine(" Next delay iteration...");
-
-                            break;
-                        }
-                        //else
-                        //{
-                        //    Thread.Sleep(4000);
-                       // }
-
+                        break;
                     }
-                    */
-
+                    //else
+                    //{
+                    //    Thread.Sleep(4000);
+                   // }
 
                 }
+
+
+
+            }
+
+               */
+
+
+
+                //  this is necessary as for some reason listener.Connected does not seem to work for a tcp server role 
+                result_read = listener.Poll(1000, SelectMode.SelectRead);
+                Console.WriteLine(" result_read: " + result_read);
+                // for some reason SelectMode.SelectWrite does not return true after socket is set to a listen state
+                result_write = listener.Poll(1000, SelectMode.SelectWrite);
+                Console.WriteLine(" result_write: " + result_write);
+
+
+
 
                 return;
             }
@@ -285,14 +373,26 @@ namespace Chat
 
                 System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint(ip, Convert.ToInt32(client_port));
 
-                Socket client = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                //Socket client = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                client = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
-                var handler = client.ConnectAsync(ipEndPoint);
+
+
+
+
+                //var handler = client.ConnectAsync(ipEndPoint);
+                //handler = client.ConnectAsync(ipEndPoint);
+
+
+                client.Connect(ipEndPoint);
+
+
+
 
                 for (; ; )
                 {
 
-                    Console.WriteLine(" Next iteration...");
+                    Console.WriteLine(" Starting next connection attempt iteration...");
 
                     bool result_connected = client.Connected;
 
@@ -320,7 +420,7 @@ namespace Chat
                         if (NOW >= NOW_PLUS)
                         {
 
-                            Console.WriteLine(" Next delay iteration...");
+                            Console.WriteLine(" Delaying loop for 5 seconds, before next connect attempt iteration...");
 
                             break;
                         }
@@ -332,6 +432,12 @@ namespace Chat
                     }
 
                 }
+
+
+
+
+
+                /*
 
 
                 int counter = 0;
@@ -370,7 +476,7 @@ namespace Chat
                             $"Socket client received acknowledgment: \"{response}\"");
                         break;
                     }
-                    */
+                    
 
 
                     // Sample output:
@@ -405,15 +511,105 @@ namespace Chat
                 }
 
 
+
+                */
+
+
+
+
+
+
+
+
+
+
+
+
+
                 return true;
             }
 
-            public bool transmit_message()
+            public bool send_message()
             {
 
 
+                Console.WriteLine(" tcp_client - inside tcpClass->send_msg");
+
+                var message = "Hi friends 👋!<|EOM|> ";
+
+                var messageBytes = Encoding.UTF8.GetBytes(message);
+
+                var sendArgs = new SocketAsyncEventArgs();
+
+                //Console.WriteLine(" client (Socket) is valid? " + client. );
+
+                client.Send(messageBytes, SocketFlags.None);
+
+                Console.WriteLine(" Just sent msg: " + message);
+
                 return true;
             }
+
+
+
+            public bool receive_message()
+            {
+
+                Console.WriteLine(" tcp_server - inside tcpClass->receive_msg");
+
+                while (true)
+                {
+                    // Receive ack.
+                    var buffer = new byte[1_024];
+                    //var received = await client.ReceiveAsync(buffer, SocketFlags.None);
+
+
+                    //  the following generating "Object not set to an instance of an object." Need to figure out why.  
+                    var received = client.Receive(buffer, SocketFlags.None);
+
+
+                    var response = Encoding.UTF8.GetString(buffer, 0, received);
+                    //if (response == "<|ACK|>")
+                    //{
+                    //    Console.WriteLine(
+                    //        $"Socket client received acknowledgment: \"{response}\"");
+                    //    break;
+                    //}
+
+                    Console.WriteLine(" printing response: " + response);
+                    Console.WriteLine(" printing buffer: " + buffer);
+
+                    TB_local.Text = response;
+                    //TextBox_Msg.Text = response;
+
+                    DateTime NOW = DateTime.Now;
+                    DateTime NOW_PLUS = NOW.AddSeconds(5);
+                    for (; ; )
+                    {
+
+                        NOW = DateTime.Now;
+
+                        if (NOW >= NOW_PLUS)
+                        {
+                            Console.WriteLine(" Delaying loop for 5 seconds, before next connect attempt iteration...");
+                            break;
+                        }
+                        else
+                        {
+                            Thread.Sleep(4000);
+                        }
+                    }
+                    //break;
+
+                }
+
+                    return true;
+            }
+
+
+
+
+
 
 
         }
@@ -422,11 +618,11 @@ namespace Chat
 
 
 
-        
+
         //////////////////
         //  TESTING SECTION - NOT RELATED TO THIS APP AT ALL (IGNORE)! 
         /// /////////////
-        
+
 
         class classForUnitTesting
         {
@@ -517,15 +713,44 @@ namespace Chat
 
             Console.WriteLine(" launching App");
 
+            //Thread t1 = new Thread(initiate_tcp);
+            //t1 = new Thread(initiate_tcp);
+            //t1.Start();
+
             initiate_tcp();
 
 
+
+
+            if (tcp_server == true)
+            {
+                Console.WriteLine(" tcp_server - initiating tcpClass->receive_msg");
+
+                tcpInstance.receive_message();
+
+            }
 
 
         }
 
         private void Button_Click_Send(object sender, RoutedEventArgs e)
         {
+
+
+
+            if ( tcp_client == true )
+            {
+
+                Console.WriteLine(" tcp_client - initiating tcpClass->send_msg");
+
+                tcpInstance.send_message();
+
+
+            }
+
+            
+
+
 
         }
 
