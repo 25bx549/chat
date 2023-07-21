@@ -25,6 +25,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Net.Mime.MediaTypeNames;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Resources;
 
 namespace Chat
 {
@@ -48,7 +49,12 @@ namespace Chat
         public bool tcp_client;
         public bool tcp_server;
 
-        public static Socket listener = null;
+
+
+
+        public TcpListener server = null;
+
+        //public static Socket listener = null;
         public static Socket client = null;
 
         public tcpClass tcpInstance;
@@ -135,6 +141,11 @@ namespace Chat
                 tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
                 tcpInstance.initiate_connection_tcp_server();
 
+                
+                //Console.WriteLine(" tcp_server - initiating tcpClass->receive_msg");
+                //tcpInstance.receive_message();
+            
+
 
 
 
@@ -169,6 +180,9 @@ namespace Chat
 
                 string[] ip_port_elements = client_ip_and_port.Split(',');
                 client_ip = ip_port_elements[0];
+
+                IPAddress iPAddress = IPAddress.Parse(ip_port_elements[0]);
+
                 client_port = ip_port_elements[1];
 
                 Console.WriteLine("client_ip: " + client_ip + " client_port: " + client_port);
@@ -184,181 +198,84 @@ namespace Chat
             //  methods
             public async void initiate_connection_tcp_server()
             {
-                //System.Net.IPEndPoint ipEndPoint = new( ipAddress, 11_000);
+
+                //System.Net.IPAddress ip = System.Net.IPAddress.Parse(client_ip);
+
+                //  the network endpoint is represented as an ipEndPoint object 
+                //  this creates a data pipe between the app and the remote destination 
+                //System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint(ip, Convert.ToInt32(client_port));
 
 
-                //System.Net.IPAddress ip = System.Net.IPAddress.Parse("192.168.0.54");
-                System.Net.IPAddress ip = System.Net.IPAddress.Parse(client_ip);
+                //  Initialize socket with protocol and network address information
+                //listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                //listener.Bind(ipEndPoint); // associate socket with local endpoint 
+                //listener.Listen(1000); //  places socket in listening state 
 
-
-
-                //System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint( ip, 1000);
-                System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint(ip, Convert.ToInt32(client_port));
-
-
-
-                //Socket listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                listener = new Socket(ipEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                listener.Bind(ipEndPoint);
-                listener.Listen(1000);
-
-                //  wait for connection to be established...
-                for (; ; )
-                {
-
-                    Console.WriteLine(" Starting next connection attempt iteration...");
-
-
-
-
-                    //  this is necessary as for some reason listener.Connected does not seem to work for a tcp server role 
-                    result_read = listener.Poll(1000, SelectMode.SelectRead);
-                    Console.WriteLine(" result_read: " + result_read);
-                    // for some reason SelectMode.SelectWrite does not return true after socket is set to a listen state
-                    result_write = listener.Poll(1000, SelectMode.SelectWrite);
-                    Console.WriteLine(" result_write: " + result_write);
-
-
-
-                    //  skip this as it does not seem to work for a tcp server role
-                    //bool result_connected = listener.Connected;
-
-
-                    if (result_read == true)
-                    //if ( (result_read == true) && (result_write == true) )
-                    //if ( result_connected == true)
-                    {
-                        //Console.WriteLine("socket Is Readble and Writable!");
-                        //Console.WriteLine("socket Is Readble!");
-                        Console.WriteLine("socket Is Connected!");
-
-                        StatusButton.Background = Brushes.Green;
-
-                        StatusButton.Content = "Connected!";
-
-                        TB_local.Text = "Initializing...";
-
-
-                        Console.WriteLine("StatusButton should have updated by now.");
-
-                        break;
-                    }
-
-                    DateTime NOW = DateTime.Now;
-                    DateTime NOW_PLUS = NOW.AddSeconds(5);
-                    for (; ; )
-                    {
-
-                        NOW = DateTime.Now;
-
-                        if (NOW >= NOW_PLUS) {
-
-                            Console.WriteLine(" Delaying loop for 5 seconds, before next connect attempt iteration...");
-
-                            break;
-                        }
-                        //else
-                        //{
-                        //    Thread.Sleep(4000);
-                        //}
-
-                    }
-
-                }
-
-
-                Console.WriteLine(" Now setting-up listener.AcceptAsync()");
-
+                //  accept incoming connection on the handler socket 
                 //var handler = await listener.AcceptAsync();
-                handler = await listener.AcceptAsync();
+                //handler = await listener.AcceptAsync();
+
+                TcpListener server = null;
+
+                Int32 port = 1000;
+                IPAddress localAddr = IPAddress.Parse("192.168.0.54");
+
+                server = new TcpListener(localAddr, port);
+
+                server.Start();
+
+                Byte[] bytes = new byte[256];
+
+                String data = null;
 
 
-
-
-                /*
-
-                while (true)
-                {
-                    // Receive message.
-                    var buffer = new byte[1_024];
-                    var receiveArgs = new SocketAsyncEventArgs();
-                    receiveArgs.SetBuffer(buffer, 0, 1024);
-
-                    //var received = handler.ReceiveAsync(receiveArgs);
-                    var received = handler.Receive(buffer);
-
-                    var response = Encoding.UTF8.GetString(buffer);
-
-                    Console.WriteLine(" printing response: " + response);
-
-                    Console.WriteLine(" printing buffr: " + buffer);
-
-                    TB_local.Text = response;
-                    //TextBox_Msg.Text = response;
-
-
-
-                    break;
-
-                    /*
-                    var eom = "<|EOM|>";
-                    if (response.IndexOf(eom) > -1 )
-                    {
-                        Console.WriteLine($"Socket server received message: \"{response.Replace(eom, "")}\"");
-
-                        var ackMessage = "<|ACK|>";
-                        var echoBytes = Encoding.UTF8.GetBytes(ackMessage);
-
-                        handler.SendAsync(echoBytes, 0);
-
-                        Console.WriteLine(
-                            $"Socket server sent acknowledgment: \"{ackMessage}\"");
-
-                        break;
-                    }
-                    */
-                //break;
-
-
-                /*
-                DateTime NOW = DateTime.Now;
-                DateTime NOW_PLUS = NOW.AddSeconds(5);
-                for (; ; )
+                while(true)
                 {
 
-                    NOW = DateTime.Now;
+                    Console.WriteLine(" Waiting for a connection.");
 
-                    if (NOW >= NOW_PLUS)
+
+                    //  Perform a blocking call to accept requests.
+                    //  You can also use server. AcceptSocket() here.
+                    TcpClient client = server.AcceptTcpClient();
+
+                    StatusButton.Background = Brushes.Green;
+
+                    StatusButton.Content = "Connected!";
+
+                    TB_local.Text = "Initializing...";
+
+                    //Console.WriteLine("socket Is Readble and Writable!");
+                    //Console.WriteLine("socket Is Readble!");
+                    Console.WriteLine("socket Is Connected!");
+
+                    Console.WriteLine("StatusButton should have updated to GREEN by now.");
+
+                    data = null;
+
+                    //  Get a stream object for reading and writing
+                    NetworkStream stream = client.GetStream();
+
+                    int i;
+
+                    //  Loop to receive all the data send by the client.
+                    while((i = stream.Read(bytes, 0, bytes.Length)) != 0)
                     {
+                        //  Translate data bytes to ASCII string.
+                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                        Console.WriteLine(" Received: {0}", data);
 
-                        Console.WriteLine(" Next delay iteration...");
+                        //  Process the data sent by the client.
+                        data = data.ToUpper();
 
-                        break;
+                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+
+                        TB_local.Text = data;
+                        //TextBox_Msg.Text = data;
+
                     }
-                    //else
-                    //{
-                    //    Thread.Sleep(4000);
-                   // }
 
                 }
-
-
-
-            }
-
-               */
-
-
-
-                //  this is necessary as for some reason listener.Connected does not seem to work for a tcp server role 
-                result_read = listener.Poll(1000, SelectMode.SelectRead);
-                Console.WriteLine(" result_read: " + result_read);
-                // for some reason SelectMode.SelectWrite does not return true after socket is set to a listen state
-                result_write = listener.Poll(1000, SelectMode.SelectWrite);
-                Console.WriteLine(" result_write: " + result_write);
-
-
-
 
                 return;
             }
@@ -405,7 +322,7 @@ namespace Chat
 
                         Console.WriteLine("socket Is Connected!");
 
-                        Console.WriteLine("StatusButton should have updated by now.");
+                        Console.WriteLine("StatusButton should have updated to GREEN by now.");
 
                         break;
                     }
@@ -430,6 +347,11 @@ namespace Chat
                         }
 
                     }
+
+
+
+
+
 
                 }
 
@@ -517,7 +439,7 @@ namespace Chat
 
 
 
-
+                //send_message();
 
 
 
@@ -535,7 +457,11 @@ namespace Chat
 
                 Console.WriteLine(" tcp_client - inside tcpClass->send_msg");
 
-                var message = "Hi friends 👋!<|EOM|> ";
+                //var message = "Hi friends 👋!<|EOM|> ";
+
+
+                var message = TextBox_Msg.Text.ToString();
+
 
                 var messageBytes = Encoding.UTF8.GetBytes(message);
 
@@ -552,20 +478,24 @@ namespace Chat
 
 
 
-            public bool receive_message()
+            public bool receive_message( )
             {
 
                 Console.WriteLine(" tcp_server - inside tcpClass->receive_msg");
 
+
+                /*
                 while (true)
                 {
+
                     // Receive ack.
                     var buffer = new byte[1_024];
                     //var received = await client.ReceiveAsync(buffer, SocketFlags.None);
 
 
                     //  the following generating "Object not set to an instance of an object." Need to figure out why.  
-                    var received = client.Receive(buffer, SocketFlags.None);
+                    var received = listener.Receive(buffer, SocketFlags.None);
+                    //var received = client.Receive(buffer, SocketFlags.None);
 
 
                     var response = Encoding.UTF8.GetString(buffer, 0, received);
@@ -581,6 +511,7 @@ namespace Chat
 
                     TB_local.Text = response;
                     //TextBox_Msg.Text = response;
+
 
                     DateTime NOW = DateTime.Now;
                     DateTime NOW_PLUS = NOW.AddSeconds(5);
@@ -602,6 +533,8 @@ namespace Chat
                     //break;
 
                 }
+
+                */
 
                     return true;
             }
@@ -719,17 +652,8 @@ namespace Chat
 
             initiate_tcp();
 
-
-
-
-            if (tcp_server == true)
-            {
-                Console.WriteLine(" tcp_server - initiating tcpClass->receive_msg");
-
-                tcpInstance.receive_message();
-
-            }
-
+            
+           
 
         }
 
