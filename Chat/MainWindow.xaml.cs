@@ -27,6 +27,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Resources;
 using System.Windows.Markup;
+using Application = System.Windows.Application;
+using System.Reflection.Emit;
 
 namespace Chat
 {
@@ -72,15 +74,21 @@ namespace Chat
             TextBox_Msg = TextBox_enterMessage;
             //TB_local = TextBox_enterMessage;
             TB_local = TextBlock_messages;
+            
 
             //TB_local.Text = "ja ja ja";
 
         }
 
 
+
+
+
+        //  This is Program Entry Point based on Button Click to establish tcp connection 
         public void initiate_tcp()
         {
 
+            /*
             //  deal with GUI controls of Main thread
             System.Windows.Application.Current.Dispatcher.Invoke( DispatcherPriority.Normal, (ThreadStart)delegate 
             {
@@ -95,6 +103,25 @@ namespace Chat
                     tcp_server = true;
                 }
             });
+            */
+
+            
+            if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            {
+                tcp = true;
+                tcp_client = true;
+            }
+            else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            {
+                tcp = true;
+                tcp_server = true;
+            }
+            
+
+
+
+
+
 
 
             //  collect config settings from UI to determine which of server/client to run...
@@ -102,6 +129,7 @@ namespace Chat
             if (tcp == true && tcp_client == true)
             {
                 tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
+
                 tcpInstance.initiate_connection_tcp_client();
 
             }
@@ -111,9 +139,33 @@ namespace Chat
 
                 tcpInstance.initiate_connection_tcp_server();
 
+                //tcpInstance.receive_message();
+
             }
 
         }
+
+
+
+
+
+        class UIControl : MainWindow
+        {
+
+
+            public static void ChangeButtonName(string text)
+            {
+                App.Current.Dispatcher.Invoke(delegate {
+
+                    StatusButton.Background = Brushes.Green;
+                    StatusButton.Content = "Connected!";
+                    
+                });
+            }
+        }
+
+
+
 
 
         public class tcpClass
@@ -175,7 +227,7 @@ namespace Chat
             public async void initiate_connection_tcp_server()
             {
 
-                
+                //UIControl.ChangeButtonName("Updated from another CLASS.");
 
                 //Int32 port = 1000;
                 port = 1000;
@@ -190,10 +242,11 @@ namespace Chat
                 bytes = new byte[256];
 
                 //String data = null;
-                data = null;
 
-                while (true)
-                {
+                //data = null;
+                
+                //while (true)
+               // {
 
                     Console.WriteLine(" Waiting for a connection.");
 
@@ -203,29 +256,25 @@ namespace Chat
                     client = server.AcceptTcpClient();
 
 
-
-                    //  deal with GUI controls of Main thread
-                    //System.Windows.Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, (ThreadStart)delegate
-                    //{
-                    StatusButton.Background = Brushes.Green;
-
-                    StatusButton.Content = "Connected!";
-                    //});
-
                     TB_local.Text = "Initializing...";
 
-                    //Console.WriteLine("socket Is Readble and Writable!");
-                    //Console.WriteLine("socket Is Readble!");
                     Console.WriteLine("socket Is Connected!");
+
+                    StatusButton.Background = Brushes.Green;
+                    StatusButton.Content = "Connected!";
 
                     Console.WriteLine("StatusButton should have updated to GREEN by now.");
 
-
-
-                    Console.WriteLine(" tcp_server - inside tcpClass->receive_msg");
-
                     String data = null;
 
+                    //  Is there any way to return from method on connect to update the button and then use receiveMessage() later
+                    //  in order to receive the message? 
+
+
+
+                
+
+                    /*
                     //  Get a stream object for reading and writing
                     //NetworkStream stream = client.GetStream();
                     NetworkStream stream = client.GetStream();
@@ -244,16 +293,29 @@ namespace Chat
 
                         byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
+                        
                         TB_local.Text = data;
                         //TextBox_Msg.Text = data;
 
                         break;
 
                     }
+                    
+                    
+                    */
 
-                    break;
 
-                }
+                   // break;
+
+                    
+
+               // }
+
+            
+
+
+
+
 
                 return;
             }
@@ -330,6 +392,8 @@ namespace Chat
 
                     TB_local.Text = data;
                     //TextBox_Msg.Text = data;
+
+                    break;
 
                 }
 
@@ -447,6 +511,16 @@ namespace Chat
             initiate_tcp();
 
 
+
+            //if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+           // {
+           //     tcpInstance.receive_message();
+            //}
+
+            
+
+
+
         }
 
         private void Button_Click_Send(object sender, RoutedEventArgs e)
@@ -455,7 +529,7 @@ namespace Chat
             if ( tcp_client == true )
             {
 
-                Console.WriteLine(" tcp_client - initiating tcpClass->send_msg");
+                Console.WriteLine(" tcp_client - initiating tcpClass->send_message()");
 
                 tcpInstance.send_message();
 
@@ -493,5 +567,32 @@ namespace Chat
         {
 
         }
+
+        private void Button_Click_tcp_server_being_listening(object sender, RoutedEventArgs e)
+        {
+
+
+            if (tcp_server == true)
+            {
+
+                Console.WriteLine(" tcp_server - initiating tcpClass->receive_message()");
+
+                tcpInstance.receive_message();
+
+            }
+
+
+        }
+
+        private void Button_Click_Exit_Application(object sender, RoutedEventArgs e)
+        {
+
+            System.Windows.Application.Current.Shutdown();
+
+        }
     }
 }
+
+
+
+
