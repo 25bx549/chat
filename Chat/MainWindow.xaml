@@ -13,7 +13,11 @@
         <CheckBox x:Name="Checkbox_tcp_client" Content="Run as tcp Client" HorizontalAlignment="Left" Margin="149,105,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_client_checked"/>
         <CheckBox x:Name="Checkbox_tcp_server" Content="Run as tcp Server" HorizontalAlignment="Left" Margin="149,136,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_server_checked"/>
         <Button Content="Send Msg" HorizontalAlignment="Left" Margin="910,0,0,0" VerticalAlignment="Center" Width="126" Click="Button_Click_Send" FontWeight="Bold"/>
-        <TextBlock x:Name="TextBlock_messages" HorizontalAlignment="Center" Margin="0,275,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="153" Width="969" Background="#FFFBF6F6"/>
+
+
+        <TextBox x:Name="TextBox_messages" Margin="62,280,57,62" TextWrapping="Wrap" Width="Auto" Background="#FFFBF6F6" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextChanged="TextBox_messages_TextChanged"/>
+         
+
         <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold"/>
         <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="62,46,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold"/>
         <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
@@ -22,7 +26,8 @@
         <Button Content="Initiate TCP Connection" HorizontalAlignment="Left" Margin="327,111,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_Intitiate_tcp" FontWeight="Bold" Height="24"/>
         <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="829,94,0,0" VerticalAlignment="Top" Width="176"/>
         <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="546,208,0,0" VerticalAlignment="Top" Width="158" FontWeight="Bold"/>
-        <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,450,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
-        <Button Content="TCP Server Begin Listening" HorizontalAlignment="Left" Margin="154,155,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_tcp_server_being_listening" FontWeight="Bold"/>
+        <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,456,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
+        <Button Content="TCP Server Begin Listening" HorizontalAlignment="Left" Margin="154,155,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_tcp_server_begin_listening" FontWeight="Bold"/>
+        <Button x:Name="Button_Clear_Log" Content="Clear Log" HorizontalAlignment="Left" Margin="62,456,0,0" VerticalAlignment="Top" Background="#FFF9FBF6" FontWeight="Bold" Width="84" Click="Button_Clear_Log_Click"/>
     </Grid>
 </Window>
