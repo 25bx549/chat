@@ -19,10 +19,10 @@
         <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
         <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="829,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="207" Text="192.168.0.54,1000"/>
         <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="630,73,0,0" VerticalAlignment="Top" Width="199" ToolTip="Enter IPv4 Local Host Address,Port"/>
-        <Button Content="TCP Client or Server&#xD;&#xA;Initiate TCP Connection" HorizontalAlignment="Left" Margin="327,94,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_Intitiate_tcp" FontWeight="Bold" Height="49"/>
+        <Button Content="Initiate TCP Connection" HorizontalAlignment="Left" Margin="327,111,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_Intitiate_tcp" FontWeight="Bold" Height="24"/>
         <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="829,94,0,0" VerticalAlignment="Top" Width="176"/>
         <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="546,208,0,0" VerticalAlignment="Top" Width="158" FontWeight="Bold"/>
         <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,450,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
-        <Button Content="TCP Server Begin Listening" HorizontalAlignment="Left" Margin="326,148,0,0" VerticalAlignment="Top" Width="219" Click="Button_Click_tcp_server_being_listening" FontWeight="Bold"/>
+        <Button Content="TCP Server Begin Listening" HorizontalAlignment="Left" Margin="154,155,0,0" VerticalAlignment="Top" Width="218" Click="Button_Click_tcp_server_being_listening" FontWeight="Bold"/>
     </Grid>
 </Window>
