@@ -42,42 +42,48 @@ namespace Chat
 
         // https://stackoverflow.com/questions/33680398/c-sharp-wpf-how-to-simply-update-ui-from-another-class-thread
         public static Button StatusButton;
+        public static TextBox IP_and_port_string;
         public static TextBox TextBox_Msg;
-        public static TextBlock TB_local;
+        public static TextBox TB_local;
 
-
+        //  booleans for tracking the role specified by the user
         public bool tcp;
         public bool tcp_client;
         public bool tcp_server;
 
+
         public TcpListener server = null;
 
-        //public static Socket listener = null;
         public static Socket client = null;
 
         public tcpClass tcpInstance;
 
+
+        //  the following are to run send_message() and receive_message() at the same time, for bi-directional messaging
         System.Threading.Thread t1;
-        //Thread t2;
 
-        //public static Socket handler = null;
+        System.Threading.Thread t2;
 
+
+        //  this is the intitial message in TextBox
+        // "&quot;Hi friends 👋!&lt;|EOM|&gt;&quot;"
 
         public MainWindow()
         {
 
             InitializeComponent();
 
-            this.Title = "System.Net.Sockets - Run as a client or server for raw messaging with another endpoint!";
+            this.Title = "  CHATFREE"; 
 
-
+            //  the following to make the UI controls accessible/updateable 
             StatusButton = Button_CxnState;
-            TextBox_Msg = TextBox_enterMessage;
-            //TB_local = TextBox_enterMessage;
-            TB_local = TextBlock_messages;
-            
 
-            //TB_local.Text = "ja ja ja";
+            IP_and_port_string = tcp_client_ip_addr_port_string;
+
+            TextBox_Msg = TextBox_enterMessage;
+
+            TB_local = TextBox_messages;
+            
 
         }
 
@@ -88,25 +94,7 @@ namespace Chat
         //  This is Program Entry Point based on Button Click to establish tcp connection 
         public void initiate_tcp()
         {
-
-            /*
-            //  deal with GUI controls of Main thread
-            System.Windows.Application.Current.Dispatcher.Invoke( DispatcherPriority.Normal, (ThreadStart)delegate 
-            {
-                if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
-                {
-                    tcp = true;
-                    tcp_client = true;
-                }
-                else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
-                {
-                    tcp = true;
-                    tcp_server = true;
-                }
-            });
-            */
-
-            
+            //  collect config settings from UI to determine which of server/client to run...
             if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
             {
                 tcp = true;
@@ -118,15 +106,7 @@ namespace Chat
                 tcp_server = true;
             }
             
-
-
-
-
-
-
-
-            //  collect config settings from UI to determine which of server/client to run...
-
+            //  now execute based on user-defined tcp role 
             if (tcp == true && tcp_client == true)
             {
                 tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
@@ -139,8 +119,6 @@ namespace Chat
                 tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
 
                 tcpInstance.initiate_connection_tcp_server();
-
-                //tcpInstance.receive_message();
 
             }
 
@@ -180,37 +158,58 @@ namespace Chat
 
             string client_port;
 
-            string server_port { get; set; }
+            //string server_port { get; set; }
 
             bool result_read;
 
             bool result_write;
 
+
+
             public Socket handler = null;
+
+            public TcpClient client = null;
 
             public TcpListener server = null;
 
-            public Int32 port = 1000;
 
-            public IPAddress localAddr = IPAddress.Parse("192.168.0.54");
+
+            public string IP_and_Port;
+            public string[] IP_Port_columns;
+
+
+            public Int32 port;  // = 1000;
+
+            //public IPAddress localAddr = IPAddress.Parse("192.168.0.54");  // localhost
+            public IPAddress localAddr = IPAddress.Parse("69.246.226.60");  // public IP
+
+
+
+
+
 
             public Byte[] bytes = new byte[256];
 
             public String data = null;
 
-            public TcpClient client = null;
+
+
+            
 
 
             public tcpClass(string role, string client_ip_and_port)
             {
+
                 this.role = role;
+
                 this.client_ip_and_port = client_ip_and_port;
-                this.server_port = server_port;
+                //this.server_port = server_port;
 
                 string[] ip_port_elements = client_ip_and_port.Split(',');
+
                 client_ip = ip_port_elements[0];
 
-                IPAddress iPAddress = IPAddress.Parse(ip_port_elements[0]);
+                //IPAddress iPAddress = IPAddress.Parse(ip_port_elements[0]);
 
                 client_port = ip_port_elements[1];
 
@@ -228,93 +227,49 @@ namespace Chat
             public async void initiate_connection_tcp_server()
             {
 
-                //UIControl.ChangeButtonName("Updated from another CLASS.");
 
-                //Int32 port = 1000;
-                port = 1000;
+                //Application.Current.Dispatcher.Invoke(() => {
+
+                    //IP_and_Port = IP_and_port_string.Text;
+                    //IP_Port_columns = IP_and_Port.Split(',');
+                    
+                //});
+
+
                 //IPAddress localAddr = IPAddress.Parse("192.168.0.54");
-                localAddr = IPAddress.Parse("192.168.0.54");
+                //localAddr = IPAddress.Parse("192.168.0.54");  //  localhost
+                //localAddr = IPAddress.Parse("69.246.226.60");  // public IP
+                //localAddr = IPAddress.Parse(IP_Port_columns[0] );  // public IP
 
-                server = new TcpListener(localAddr, port);
+                //server = new TcpListener( localAddr, Convert.ToInt32(client_port));
+
+                //server = new TcpListener(IPAddress.Parse(client_ip), Convert.ToInt32(client_port));
+
+                server = new TcpListener( IPAddress.Parse(client_ip) , Convert.ToInt32(client_port) );
+
 
                 server.Start();
-
-                //Byte[] bytes = new byte[256];
+                
                 bytes = new byte[256];
 
-                //String data = null;
+                Console.WriteLine(" Waiting for a connection.");
 
-                //data = null;
-                
-                //while (true)
-               // {
-
-                    Console.WriteLine(" Waiting for a connection.");
-
-                    //  Perform a blocking call to accept requests.
-                    //  You can also use server. AcceptSocket() here.
-                    //tcpClient client = server.AcceptTcpClient();
-                    client = server.AcceptTcpClient();
+                //  Perform a blocking call to accept requests.
+                //  You can also use server. AcceptSocket() here.
+                //tcpClient client = server.AcceptTcpClient();
+                client = server.AcceptTcpClient();
 
 
-                    TB_local.Text = "Initializing...";
+                //TB_local.Text = "Initializing...";
 
-                    Console.WriteLine("socket Is Connected!");
+                Console.WriteLine("socket Is Connected!");
 
-                    StatusButton.Background = Brushes.Green;
-                    StatusButton.Content = "Connected!";
+                StatusButton.Background = Brushes.Green;
+                StatusButton.Content = "Connected!";
 
-                    Console.WriteLine("StatusButton should have updated to GREEN by now.");
+                Console.WriteLine("StatusButton should have updated to GREEN by now.");
 
-                    String data = null;
-
-                    //  Is there any way to return from method on connect to update the button and then use receiveMessage() later
-                    //  in order to receive the message? 
-
-
-
-                
-
-                    /*
-                    //  Get a stream object for reading and writing
-                    //NetworkStream stream = client.GetStream();
-                    NetworkStream stream = client.GetStream();
-
-                    int i;
-
-                    //  Loop to receive all the data send by the client.
-                    while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                    {
-                        //  Translate data bytes to ASCII string.
-                        data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                        Console.WriteLine(" Received: {0}", data);
-
-                        //  Process the data sent by the client.
-                        data = data.ToUpper();
-
-                        byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                        
-                        TB_local.Text = data;
-                        //TextBox_Msg.Text = data;
-
-                        break;
-
-                    }
-                    
-                    
-                    */
-
-
-                   // break;
-
-                    
-
-               // }
-
-            
-
-
+                String data = null;
 
 
 
@@ -327,11 +282,12 @@ namespace Chat
             public bool initiate_connection_tcp_client()
             {
 
-                System.Net.IPAddress ip = System.Net.IPAddress.Parse(client_ip);
+                //System.Net.IPAddress ip = System.Net.IPAddress.Parse(client_ip);
 
-                System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint(ip, Convert.ToInt32(client_port));
+                //System.Net.IPEndPoint ipEndPoint = new System.Net.IPEndPoint( System.Net.IPAddress.Parse(client_ip), Convert.ToInt32(client_port));
 
-                client = new TcpClient(client_ip, Convert.ToInt32(client_port));
+                //client = new TcpClient( client_ip, Convert.ToInt32(client_port) );
+                client = new TcpClient( client_ip, Convert.ToInt32(client_port));
 
                 StatusButton.Background = Brushes.Green;
 
@@ -344,7 +300,7 @@ namespace Chat
                 return true;
             }
 
-            public bool send_message()
+            public void send_message()
             {
 
 
@@ -352,7 +308,16 @@ namespace Chat
 
                 NetworkStream stream = client.GetStream();
 
-                var message = "Hi friends 👋!<|EOM|> ";
+                //var message = "Hi friends 👋!<|EOM|> ";
+
+                string message = null;
+
+                Application.Current.Dispatcher.Invoke(() => {
+
+                    message = TextBox_Msg.Text;
+
+                });
+
 
                 Byte[] data = Encoding.UTF8.GetBytes(message);
 
@@ -360,13 +325,19 @@ namespace Chat
 
                 Console.WriteLine(" Just sent msg: " + message);
 
-                return true;
+                //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
+                Application.Current.Dispatcher.Invoke(() => {
+
+                    TB_local.AppendText("Msg Sent: " + message + Environment.NewLine);
+
+                });
+
+                return;
             }
 
 
 
-            //  this method might not be necessary 
-            public bool receive_message( )
+            public void receive_message( )
             {
 
                 Console.WriteLine(" tcp_server - inside tcpClass->receive_msg");
@@ -391,22 +362,28 @@ namespace Chat
 
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
-                    TB_local.Text = data;
-                    //TextBox_Msg.Text = data;
 
-                    break;
-
+                    //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
+                    Application.Current.Dispatcher.Invoke(() => {
+                        
+                        TB_local.AppendText("Msg Received: " + data + Environment.NewLine);
+                        
+                    });
+                    
                 }
 
-                
-
-                return true;
+                return;
             }
 
 
         }
 
 
+
+        //  this works. Need to understand why, versus all the other options that fail 
+        //Application.Current.Dispatcher.Invoke( () =>  {
+            // Code to run on the GUI thread.
+        //});
 
 
 
@@ -505,36 +482,35 @@ namespace Chat
 
             Console.WriteLine(" launching App");
 
-            //Thread t1 = new Thread(initiate_tcp);
-            //t1 = new Thread(initiate_tcp);
-            //t1.Start();
-
             initiate_tcp();
-
-
-
-            //if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
-           // {
-           //     tcpInstance.receive_message();
-            //}
-
-            
-
-
 
         }
 
         private void Button_Click_Send(object sender, RoutedEventArgs e)
         {
 
-            if ( tcp_client == true )
-            {
+            //if ( tcp_client == true )
+            //{
 
                 Console.WriteLine(" tcp_client - initiating tcpClass->send_message()");
 
+                //t1 = new Thread(tcpInstance.send_message);
+
+                //t1.Start();
+
+
+
                 tcpInstance.send_message();
 
-            }
+
+
+                //t2 = new Thread(tcpInstance.receive_message);
+
+                //t2.Start();
+
+
+
+            //}
 
         }
 
@@ -569,18 +545,21 @@ namespace Chat
 
         }
 
-        private void Button_Click_tcp_server_being_listening(object sender, RoutedEventArgs e)
+        private void Button_Click_tcp_server_begin_listening(object sender, RoutedEventArgs e)
         {
 
 
-            if (tcp_server == true)
-            {
+            Console.WriteLine(" tcp_server - initiating tcpClass->receive_message()");
 
-                Console.WriteLine(" tcp_server - initiating tcpClass->receive_message()");
 
-                tcpInstance.receive_message();
+            //t1 = new Thread(tcpInstance.send_message);
 
-            }
+            //t1.Start();
+
+
+            t2 = new Thread(this.tcpInstance.receive_message);
+
+            t2.Start();
 
 
         }
@@ -589,6 +568,25 @@ namespace Chat
         {
 
             System.Windows.Application.Current.Shutdown();
+
+        }
+
+        private void TextBox_messages_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Clear_Log_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            TB_local.Clear();
+
+            //Application.Current.Dispatcher.Invoke(() => {
+
+                //TB_local.AppendText(data + Environment.NewLine);
+
+            //});
 
         }
     }
