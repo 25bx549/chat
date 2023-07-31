@@ -44,7 +44,8 @@ namespace Chat
         public static Button StatusButton;
         public static TextBox IP_and_port_string;
         public static TextBox TextBox_Msg;
-        public static TextBox TB_local;
+        public static RichTextBox RTB_local;
+
 
         //  booleans for tracking the role specified by the user
         public bool tcp;
@@ -82,14 +83,10 @@ namespace Chat
 
             TextBox_Msg = TextBox_enterMessage;
 
-            TB_local = TextBox_messages;
-            
+            RTB_local = RichTextBox_Messages;
+
 
         }
-
-
-
-
 
         //  This is Program Entry Point based on Button Click to establish tcp connection 
         public void initiate_tcp()
@@ -194,7 +191,7 @@ namespace Chat
 
 
 
-            
+            public FlowDocument myFlowDoc = new FlowDocument();
 
 
             public tcpClass(string role, string client_ip_and_port)
@@ -313,22 +310,64 @@ namespace Chat
                 string message = null;
 
                 Application.Current.Dispatcher.Invoke(() => {
-
+                    
                     message = TextBox_Msg.Text;
+                    message = message.TrimEnd(new char[] { '\r', '\n' });
 
                 });
 
 
                 Byte[] data = Encoding.UTF8.GetBytes(message);
 
+
+
                 stream.Write(data, 0, data.Length); 
 
                 Console.WriteLine(" Just sent msg: " + message);
+                
 
                 //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
                 Application.Current.Dispatcher.Invoke(() => {
 
-                    TB_local.AppendText("Msg Sent: " + message + Environment.NewLine);
+                    
+                    //FlowDocument myFlowDoc = new FlowDocument();
+                    //Run myRun = new Run("This is a new line");
+                    message = " Sent msg: " + message;
+                    message = message.TrimEnd(new char[] { 'r', '\n' });
+                    Run myRun = new Run( message );
+                    Bold myBold = new Bold(myRun);
+                    Paragraph myParagraph = new Paragraph();
+                    myParagraph.Margin = new Thickness(0);
+                    myParagraph.Inlines.Add(myRun);
+                    myParagraph.Inlines.Add(myBold);
+
+                    if (this.role == "client")
+                    {
+                        myParagraph.Foreground = Brushes.Red;
+                    }
+
+                    if (this.role == "server")
+                    {
+                        myParagraph.Foreground = Brushes.LightGreen;
+
+                    }
+
+                    myFlowDoc.Blocks.Add(myParagraph);
+                    //myFlowDoc.Blocks.Append(myParagraph);
+
+                    RTB_local.Document = myFlowDoc;
+
+
+
+                    //RTB_local.AppendText(Environment.NewLine + "Msg Sent: " + message  );
+
+                    //RTB_local.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.LightGreen );
+
+
+
+
+
+
 
                 });
 
@@ -355,7 +394,10 @@ namespace Chat
                 {
                     //  Translate data bytes to ASCII string.
                     data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                    Console.WriteLine(" Received: {0}", data);
+                    data = data.TrimEnd(new char[] { '\r', '\n' });
+                    data = " Received: " + data;
+                    data = data.TrimEnd(new char[] { 'r', '\n' });
+                    Console.WriteLine( data);
 
                     //  Process the data sent by the client.
                     data = data.ToUpper();
@@ -365,9 +407,47 @@ namespace Chat
 
                     //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
                     Application.Current.Dispatcher.Invoke(() => {
+
+                       
+
+                        //FlowDocument myFlowDoc = new FlowDocument();
+                        //Run myRun = new Run("This is a new line");
                         
-                        TB_local.AppendText("Msg Received: " + data + Environment.NewLine);
+                        Run myRun = new Run(data);
+                        Bold myBold = new Bold(myRun);
+                        Paragraph myParagraph = new Paragraph();
+                        myParagraph.Margin = new Thickness(0);
+                        myParagraph.Inlines.Add(myRun);
+                        myParagraph.Inlines.Add(myBold);
+
+
+                        if (this.role == "client")
+                        {
+                            myParagraph.Foreground = Brushes.LightGreen;
+                        }
+
+
+                        if (this.role == "server")
+                        {
+                            myParagraph.Foreground = Brushes.Red;
+                        }
+
+                        myFlowDoc.Blocks.Add(myParagraph);
+                        //myFlowDoc.Blocks.Append(myParagraph);
+
+                        RTB_local.Document = myFlowDoc;
                         
+                        
+
+
+
+
+                        //RTB_local.SelectionBrush = Brushes.Red;
+
+                        //RTB_local.AppendText(Environment.NewLine + "Msg Received: " + data );
+
+                        //RTB_local.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+
                     });
                     
                 }
@@ -571,22 +651,29 @@ namespace Chat
 
         }
 
-        private void TextBox_messages_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
+       
 
         private void Button_Clear_Log_Click(object sender, RoutedEventArgs e)
         {
 
 
-            TB_local.Clear();
+            //TB_local.Clear();
+
+            RTB_local.Document.Blocks.Clear();
 
             //Application.Current.Dispatcher.Invoke(() => {
 
-                //TB_local.AppendText(data + Environment.NewLine);
+            //TB_local.AppendText(data + Environment.NewLine);
 
             //});
+
+        }
+
+        private void RichTextBox_Messages_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+
+
 
         }
     }

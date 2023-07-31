@@ -15,9 +15,6 @@
         <Button Content="Send Msg" HorizontalAlignment="Left" Margin="910,0,0,0" VerticalAlignment="Center" Width="126" Click="Button_Click_Send" FontWeight="Bold"/>
 
 
-        <TextBox x:Name="TextBox_messages" Margin="62,280,57,62" TextWrapping="Wrap" Width="Auto" Background="#FFFBF6F6" ScrollViewer.VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextChanged="TextBox_messages_TextChanged"/>
-         
-
         <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold"/>
         <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="62,46,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold"/>
         <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
@@ -29,5 +26,22 @@
         <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,456,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
         <Button Content="Begin Listening" HorizontalAlignment="Left" Margin="382,127,0,0" VerticalAlignment="Top" Width="164" Click="Button_Click_tcp_server_begin_listening" FontWeight="Bold"/>
         <Button x:Name="Button_Clear_Log" Content="Clear Log" HorizontalAlignment="Left" Margin="62,456,0,0" VerticalAlignment="Top" Background="#FFF9FBF6" FontWeight="Bold" Width="84" Click="Button_Clear_Log_Click"/>
+        <RichTextBox x:Name="RichTextBox_Messages" Margin="35,276,57,57" TextChanged="RichTextBox_Messages_TextChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
+            <FlowDocument>
+                <FlowDocument.Resources>
+                    <!-- This style is used to set the margins for all paragraphs in the FlowDocument to 0. -->
+                    <Style TargetType="{x:Type Paragraph}">
+                        <Setter Property="Margin" Value="0"/>
+                    </Style>
+                </FlowDocument.Resources>
+
+
+                <Paragraph >
+
+                </Paragraph>
+                
+                
+            </FlowDocument>
+        </RichTextBox>
     </Grid>
 </Window>
