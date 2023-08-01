@@ -1,7 +1,9 @@
 # chat
 
 
+![alt text](chatfree2.gif)
 
+![alt text](chatfree1.gif)
 
 
 
