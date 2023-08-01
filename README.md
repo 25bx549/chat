@@ -1,7 +1,7 @@
 # chat
 
 
-![Alt text](./chatfree2.gif) / ![](./chatfree1.gif) 
+![Alt text](https://github.com/25BX549/chatfree2.gif) / ![](https://github.com/25BX549/chatfree1.gif) 
 
 
 
