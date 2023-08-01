@@ -1,7 +1,7 @@
 # chat
 
 
-![Alt text](https://github.com/25bx549/chat/blob/master/chatfree2.GIF) / ![BA](https://github.com/25bx549/chat/blob/master/chatfree1.GIF) 
+![](https://github.com/25bx549/chat/blob/master/lifecap1.GIF)  
 
 
 
