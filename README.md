@@ -1,7 +1,7 @@
 # chat
 
 
-![](https://github.com/25bx549/chat/master/licecap1.gif)  
+![](https://github.com/25bx549/chat/tree/master/licecap1.gif)  
 
 
 
