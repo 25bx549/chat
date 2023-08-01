@@ -1,9 +1,8 @@
 # chat
 
 
-![](chatfree2.gif)
+![Alt text](chatfree2.gif) / ![](chatfree1.gif) 
 
-![](chatfree1.gif)
 
 
 
