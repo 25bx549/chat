@@ -1,9 +1,9 @@
 # chat
 
 
-![alt text](chatfree2.gif)
+![](chatfree2.gif)
 
-![alt text](chatfree1.gif)
+![](chatfree1.gif)
 
 
 
