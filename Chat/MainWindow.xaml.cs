@@ -83,7 +83,7 @@ namespace Chat
 
             InitializeComponent();
 
-            this.Title = "  CHATFREE"; 
+            this.Title = "  Chat"; 
 
             //  the following to make the UI controls accessible/updateable 
             StatusButton = Button_CxnState;
@@ -926,6 +926,12 @@ namespace Chat
 
                 tcpInstance.close_tcp_server_connection();
                 
+                System.Windows.Application.Current.Shutdown();
+
+            }
+
+            else
+            {
                 System.Windows.Application.Current.Shutdown();
 
             }
