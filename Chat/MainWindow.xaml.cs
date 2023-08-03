@@ -21,6 +21,8 @@ using System.Windows.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
 //using static System.Net.Mime.MediaTypeNames;
+using System.Timers;
+
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static System.Net.Mime.MediaTypeNames;
@@ -68,6 +70,10 @@ namespace Chat
 
         public System.Threading.Thread t2;
 
+        public System.Timers.Timer heartbeatTimer = null;
+
+        public bool CxnStatus = false; 
+
 
         //  this is the intitial message in TextBox
         // "&quot;Hi friends 👋!&lt;|EOM|&gt;&quot;"
@@ -89,11 +95,24 @@ namespace Chat
             RTB_local = RichTextBox_Messages;
 
 
-            //  DispatcherTimer setup
+            
+            //  DispatcherTimer setup for checking state of tcp connection 
             DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(5);
             dispatcherTimer.Start();
+            
+
+
+            /*
+            //  heartbeat timer event handler to ensure client remains connected (or detect that it is no longer connected) 
+            System.Timers.Timer heartbeatTimer = new System.Timers.Timer(5000);
+            //heartbeatTimer.Interval = 5000; //5 seconds
+            heartbeatTimer.Elapsed += heartbeatTimer_Elapsed;
+            heartbeatTimer.AutoReset = true;
+            heartbeatTimer.Enabled = true;
+            heartbeatTimer.Start();
+            */
 
 
         }
@@ -262,10 +281,15 @@ namespace Chat
                 String data = null;
 
 
+                
+                
 
-            //    t1 = new Thread( runDispatcherTimer );
+                
 
-            //    t1.Start();
+
+                //    t1 = new Thread( runDispatcherTimer );
+
+                //    t1.Start();
 
                 return;
             }
@@ -282,32 +306,24 @@ namespace Chat
             public bool checkConnection() { 
 
 
-                bool isConnected = true;
+              bool isConnected = true;
 
+               if  (client.Connected == true)
+               {
 
-                //for (;;) {
+                    Console.WriteLine(" Client IS connected.");
 
-                    if ( client.Connected )
-                    {
+                    return true;
 
-                        Console.WriteLine(" Client IS connected.");
+               }
+               else if (client.Connected == false)
+               {
 
-                        return true;
+                    Console.WriteLine(" Client is NOT connected.");
 
+                    return false;
 
-                    }
-                    else if (! client.Connected)
-                    {
-
-                        Console.WriteLine(" Client is NOT connected.");
-
-                        return false;
-
-                    }
-
-
-                //}
-
+               }
 
                 return false;
             }
@@ -337,6 +353,32 @@ namespace Chat
 
                 return true;
             }
+
+
+
+            public bool close_tcp_client_connection()
+            {
+
+
+                client.Close();
+
+
+                return true;
+            }
+
+
+            public bool close_tcp_server_connection()
+            {
+
+                client.Close();
+
+                return true;
+            }
+
+
+
+
+
 
             public void send_message()
             {
@@ -416,6 +458,55 @@ namespace Chat
             }
 
 
+            public void send_HB_message()
+            {
+
+
+                Console.WriteLine(" tcp_client - inside tcpClass->send_HB_message()");
+
+                NetworkStream stream = client.GetStream();
+
+                //var message = "Hi friends 👋!<|EOM|> ";
+
+                string message = null;
+
+                Application.Current.Dispatcher.Invoke(() => {
+
+                    message = "HB";
+                    message = message.TrimEnd(new char[] { '\r', '\n' });
+
+                });
+
+
+                Byte[] data = Encoding.UTF8.GetBytes(message);
+
+                stream.Write(data, 0, data.Length);
+
+                Console.WriteLine(" Just sent msg: " + message);
+
+                return;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             public void receive_message( )
             {
@@ -480,7 +571,7 @@ namespace Chat
                         
                         
 
-
+                        
 
 
                         //RTB_local.SelectionBrush = Brushes.Red;
@@ -596,7 +687,7 @@ namespace Chat
 
 
 
-
+        
         //  the following to check the state of the tcp unicast connection every five seconds
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
@@ -609,15 +700,104 @@ namespace Chat
 
                 result = tcpInstance.checkConnection();
 
+                Console.WriteLine(Environment.NewLine + DateTime.Now + " tcp Connection Status: " + result);
+
+
+                if ( result == false )
+                {
+
+                    StatusButton.Background = Brushes.Red;
+
+                    StatusButton.Content = "Disconnected!";
+
+                    Console.WriteLine("socket Disconnected!");
+
+                    Console.WriteLine("StatusButton should have updated to RED.");
+
+                }
+
+
+                /*  heartbeat not needed for now 
+                try
+                {
+                    tcpInstance.send_HB_message();
+                }
+                catch( Exception f)
+                {
+                    Console.WriteLine(f.Message);
+                }
+                */
+
+
             }
-            Console.WriteLine(Environment.NewLine + DateTime.Now + " tcp Connection Status: " + result);
+            
 
 
+            
 
 
             // Forcing the CommandManager to raise the RequerySuggested event
             CommandManager.InvalidateRequerySuggested();
         }
+        
+
+
+
+
+
+        /*
+        //  The following for sending/receiving heartbeat messages between tcp client and tcp server 
+        void heartbeatTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (tcp_server == true)
+            {
+                try
+                {
+                    tcpInstance.send_HB_message();
+
+                }
+                catch (Exception f)
+                {
+
+                    Console.WriteLine(f.Message); //Check what is the exception
+
+                    //Fa
+                    //il to send message - client disconnected.
+                    //Invoke((MethodInvoker)delegate //prevent cross-thread exception
+                    //{
+
+                    //    ClientIPLabel.Text = "(No Clients Connected)";
+
+                    //});
+
+                    Console.WriteLine(Environment.NewLine + DateTime.Now + " heartbeatTimer.Stop()");
+
+
+                    System.Timers.Timer timer = (System.Timers.Timer)sender; // Get the timer that fired the event
+
+                    timer.Stop(); // Stop the timer that fired the event
+
+
+                    
+
+                    //heartbeatTimer.AutoReset = false;
+
+                    //client.Disconnect();
+
+                    //server.Stop();
+
+
+
+                }
+
+            }
+
+        }
+        */
+
+
+
+
 
 
 
@@ -625,13 +805,20 @@ namespace Chat
         private void Button_Click_Intitiate_tcp(object sender, RoutedEventArgs e)
         {
 
-            Console.WriteLine(" launching App");
 
+
+
+            Console.WriteLine(" launching App");
+            
             initiate_tcp();
 
 
+            
 
 
+
+
+            
 
 
         }
@@ -721,7 +908,26 @@ namespace Chat
         private void Button_Click_Exit_Application(object sender, RoutedEventArgs e)
         {
 
-            System.Windows.Application.Current.Shutdown();
+            if ( tcp_client == true)
+            {
+
+                tcpInstance.close_tcp_client_connection();
+
+                System.Windows.Application.Current.Shutdown();
+
+            }
+
+            else if ( tcp_server == true )
+            {
+
+
+                tcpInstance.close_tcp_server_connection();
+                
+                System.Windows.Application.Current.Shutdown();
+
+            }
+
+
 
         }
 
