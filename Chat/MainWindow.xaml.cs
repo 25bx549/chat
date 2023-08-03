@@ -83,7 +83,7 @@ namespace Chat
 
             InitializeComponent();
 
-            this.Title = "  Chat"; 
+            this.Title = "  Chat v1.0"; 
 
             //  the following to make the UI controls accessible/updateable 
             StatusButton = Button_CxnState;

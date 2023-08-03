@@ -4,8 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chat"
-        mc:Ignorable="d"
-        Title="Chat" Height="550" Width="1113">
+        mc:Ignorable="d" Height="550" Width="1113">
     <Grid Background="#FF47BFF3" Margin="10,10,10,13">
         <RadioButton x:Name="Radio_tcp" Content="TCP" HorizontalAlignment="Left" Margin="67,110,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_tcp"/>
         <RadioButton x:Name="Radio_udp" Content="UDP (ignore/under construction)" HorizontalAlignment="Left" Margin="67,197,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_udp" Width="261"/>
