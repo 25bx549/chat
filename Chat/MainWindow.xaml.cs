@@ -840,6 +840,9 @@ namespace Chat
                 tcpInstance.send_message();
 
 
+                TextBox_enterMessage.Clear();
+
+                Keyboard.Focus(TextBox_enterMessage);
 
                 //t2 = new Thread(tcpInstance.receive_message);
 
