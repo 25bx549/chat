@@ -9,10 +9,12 @@
     <Grid Background="#FF47BFF3" Margin="10,10,10,13">
         <RadioButton x:Name="Radio_tcp" Content="TCP" HorizontalAlignment="Left" Margin="67,110,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_tcp"/>
         <RadioButton x:Name="Radio_udp" Content="UDP (ignore/under construction)" HorizontalAlignment="Left" Margin="67,197,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_udp" Width="261"/>
-        <TextBox x:Name="TextBox_enterMessage" HorizontalAlignment="Left" Margin="614,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="422" TextChanged="TextBox_enterMessage_TextChanged" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible"/>
+
+        <TextBox x:Name="TextBox_enterMessage" HorizontalAlignment="Left" Margin="614,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="422" TextChanged="TextBox_enterMessage_TextChanged" Height="36" />
+
         <CheckBox x:Name="Checkbox_tcp_client" Content="Run as tcp Client" HorizontalAlignment="Left" Margin="149,105,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_client_checked"/>
         <CheckBox x:Name="Checkbox_tcp_server" Content="Run as tcp Server" HorizontalAlignment="Left" Margin="149,136,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_server_checked"/>
-        <Button Content="Send Msg" HorizontalAlignment="Left" Margin="910,246,0,0" VerticalAlignment="Top" Width="126" Click="Button_Click_Send" FontWeight="Bold"/>
+        <Button Content="Send Msg" HorizontalAlignment="Left" Margin="910,247,0,0" VerticalAlignment="Top" Width="126" Click="Button_Click_Send" FontWeight="Bold"/>
 
 
         <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold"/>
