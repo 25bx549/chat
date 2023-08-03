@@ -5,25 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chat"
         mc:Ignorable="d" Height="550" Width="1113">
-    <Grid Background="#FF47BFF3" Margin="10,10,10,13">
-        <RadioButton x:Name="Radio_tcp" Content="TCP" HorizontalAlignment="Left" Margin="67,110,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_tcp"/>
-        <RadioButton x:Name="Radio_udp" Content="UDP (ignore/under construction)" HorizontalAlignment="Left" Margin="67,197,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_udp" Width="261"/>
+    <Grid Background="#FF4587A4" Margin="10,10,10,13">
+        <RadioButton x:Name="Radio_tcp" Content="TCP" HorizontalAlignment="Left" Margin="67,110,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_tcp" Foreground="#FFF9F301"/>
+        <RadioButton x:Name="Radio_udp" Content="UDP (ignore/under construction)" HorizontalAlignment="Left" Margin="67,197,0,0" VerticalAlignment="Top" Checked="RadioButton_Checked_udp" Width="261" Foreground="#FFF7F100"/>
 
         <TextBox x:Name="TextBox_enterMessage" HorizontalAlignment="Left" Margin="614,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="422" TextChanged="TextBox_enterMessage_TextChanged" Height="36" />
 
-        <CheckBox x:Name="Checkbox_tcp_client" Content="Run as tcp Client" HorizontalAlignment="Left" Margin="149,105,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_client_checked"/>
-        <CheckBox x:Name="Checkbox_tcp_server" Content="Run as tcp Server" HorizontalAlignment="Left" Margin="149,136,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_server_checked"/>
+        <CheckBox x:Name="Checkbox_tcp_client" Content="Run as tcp Client" HorizontalAlignment="Left" Margin="149,105,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_client_checked" Foreground="#FFF5EF01"/>
+        <CheckBox x:Name="Checkbox_tcp_server" Content="Run as tcp Server" HorizontalAlignment="Left" Margin="149,136,0,0" VerticalAlignment="Top" Checked="Checkbox_tcp_server_checked" Foreground="#FFFDF702"/>
         <Button Content="Send Msg" HorizontalAlignment="Left" Margin="910,247,0,0" VerticalAlignment="Top" Width="126" Click="Button_Click_Send" FontWeight="Bold"/>
 
 
-        <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold"/>
-        <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="62,46,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold"/>
-        <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFFDFAFA" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
+        <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold" Foreground="#FFF7F103"/>
+        <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="62,46,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold" Foreground="#FFF7F102"/>
+        <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFF9DC02" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
         <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="829,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="207" Text="69.246.226.60,24680"/>
-        <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="630,73,0,0" VerticalAlignment="Top" Width="199" ToolTip="Enter IPv4 Local Host Address,Port"/>
+        <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="630,73,0,0" VerticalAlignment="Top" Width="199" ToolTip="Enter IPv4 Local Host Address,Port" Foreground="#FFF7F102"/>
         <Button Content="Initiate Connection" HorizontalAlignment="Left" Margin="382,97,0,0" VerticalAlignment="Top" Width="164" Click="Button_Click_Intitiate_tcp" FontWeight="Bold" Height="24"/>
-        <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="829,94,0,0" VerticalAlignment="Top" Width="176"/>
-        <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="456,206,0,0" VerticalAlignment="Top" Width="158" FontWeight="Bold"/>
+        <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="829,94,0,0" VerticalAlignment="Top" Width="176" Foreground="#FFF7F101"/>
+        <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="456,206,0,0" VerticalAlignment="Top" Width="158" FontWeight="Bold" Foreground="#FFF9F303"/>
         <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,456,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
         <Button Content="Begin Listening" HorizontalAlignment="Left" Margin="382,127,0,0" VerticalAlignment="Top" Width="164" Click="Button_Click_tcp_server_begin_listening" FontWeight="Bold"/>
         <Button x:Name="Button_Clear_Log" Content="Clear Log" HorizontalAlignment="Left" Margin="62,456,0,0" VerticalAlignment="Top" Background="#FFF9FBF6" FontWeight="Bold" Width="84" Click="Button_Clear_Log_Click"/>

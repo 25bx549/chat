@@ -52,3 +52,13 @@ C:\david\broker-dealer-firm\dev\c#\chat\Chat\obj\Debug\Chat.csproj.CoreCompileIn
 C:\david\broker-dealer-firm\dev\c#\chat\Chat\obj\Debug\Chat.csproj.CopyComplete
 C:\david\broker-dealer-firm\dev\c#\chat\Chat\obj\Debug\Chat.exe
 C:\david\broker-dealer-firm\dev\c#\chat\Chat\obj\Debug\Chat.pdb
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\ControlzEx.dll
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\MahApps.Metro.dll
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\Microsoft.Xaml.Behaviors.dll
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\ControlzEx.pdb
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\ControlzEx.xml
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\MahApps.Metro.pdb
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\MahApps.Metro.xml
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\Microsoft.Xaml.Behaviors.pdb
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\Microsoft.Xaml.Behaviors.xml
+C:\david\broker-dealer-firm\dev\c#\chat\Chat\bin\Debug\de\MahApps.Metro.resources.dll

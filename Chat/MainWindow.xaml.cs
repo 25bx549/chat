@@ -461,7 +461,6 @@ namespace Chat
             public void send_HB_message()
             {
 
-
                 Console.WriteLine(" tcp_client - inside tcpClass->send_HB_message()");
 
                 NetworkStream stream = client.GetStream();
@@ -476,7 +475,6 @@ namespace Chat
                     message = message.TrimEnd(new char[] { '\r', '\n' });
 
                 });
-
 
                 Byte[] data = Encoding.UTF8.GetBytes(message);
 
@@ -536,51 +534,43 @@ namespace Chat
 
                     byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
-
-                    //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
-                    Application.Current.Dispatcher.Invoke(() => {
-
-                       
-
-                        //FlowDocument myFlowDoc = new FlowDocument();
-                        //Run myRun = new Run("This is a new line");
-                        
-                        Run myRun = new Run(data);
-                        Bold myBold = new Bold(myRun);
-                        Paragraph myParagraph = new Paragraph();
-                        myParagraph.Margin = new Thickness(0);
-                        myParagraph.Inlines.Add(myRun);
-                        myParagraph.Inlines.Add(myBold);
-
-
-                        if (this.role == "client")
+                    if (data.Contains("HB") != true)
+                    {
+                        //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
+                        Application.Current.Dispatcher.Invoke(() =>
                         {
-                            myParagraph.Foreground = Brushes.Green;
-                        }
+
+                            Run myRun = new Run(data);
+                            Bold myBold = new Bold(myRun);
+                            Paragraph myParagraph = new Paragraph();
+                            myParagraph.Margin = new Thickness(0);
+                            myParagraph.Inlines.Add(myRun);
+                            myParagraph.Inlines.Add(myBold);
 
 
-                        if (this.role == "server")
-                        {
-                            myParagraph.Foreground = Brushes.Red;
-                        }
-
-                        myFlowDoc.Blocks.Add(myParagraph);
-                        //myFlowDoc.Blocks.Append(myParagraph);
-
-                        RTB_local.Document = myFlowDoc;
-                        
-                        
-
-                        
+                            if (this.role == "client")
+                            {
+                                myParagraph.Foreground = Brushes.Green;
+                            }
 
 
-                        //RTB_local.SelectionBrush = Brushes.Red;
+                            if (this.role == "server")
+                            {
+                                myParagraph.Foreground = Brushes.Red;
+                            }
 
-                        //RTB_local.AppendText(Environment.NewLine + "Msg Received: " + data );
+                            myFlowDoc.Blocks.Add(myParagraph);
+                            //myFlowDoc.Blocks.Append(myParagraph);
 
-                        //RTB_local.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
 
-                    });
+
+                            RTB_local.Document = myFlowDoc;
+
+
+
+
+                        });
+                    }
                     
                 }
 
