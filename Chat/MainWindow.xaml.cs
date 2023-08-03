@@ -717,7 +717,7 @@ namespace Chat
                 }
 
 
-                /*  heartbeat not needed for now 
+                
                 try
                 {
                     tcpInstance.send_HB_message();
@@ -726,7 +726,7 @@ namespace Chat
                 {
                     Console.WriteLine(f.Message);
                 }
-                */
+                
 
 
             }
