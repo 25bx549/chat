@@ -19,10 +19,10 @@
         <Label Content="Chat Log" HorizontalAlignment="Left" Margin="67,245,0,0" VerticalAlignment="Top" Width="245" FontWeight="Bold" Foreground="#FFF7F103"/>
         <Label Content="TCP Connection State" HorizontalAlignment="Left" Margin="62,46,0,0" VerticalAlignment="Top" Width="183" FontWeight="Bold" Foreground="#FFF7F102"/>
         <Button x:Name="Button_CxnState" Content="&lt;not connected&gt;" HorizontalAlignment="Left" Margin="250,52,0,0" VerticalAlignment="Top" Width="154" Background="#FFF52525" Foreground="#FFF9DC02" RenderTransformOrigin="1.267,0.648" Click="Button_CxnState_Click"/>
-        <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="829,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="207" Text="69.246.226.60,24680"/>
+        <TextBox x:Name="tcp_client_ip_addr_port_string" HorizontalAlignment="Left" Margin="829,78,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="207"/>
         <Label Content="Enter Server IP Address,Port" HorizontalAlignment="Left" Margin="630,73,0,0" VerticalAlignment="Top" Width="199" ToolTip="Enter IPv4 Local Host Address,Port" Foreground="#FFF7F102"/>
         <Button Content="Initiate Connection" HorizontalAlignment="Left" Margin="382,97,0,0" VerticalAlignment="Top" Width="164" Click="Button_Click_Intitiate_tcp" FontWeight="Bold" Height="24"/>
-        <Label Content="e.g. 192.168.0.54,1000" HorizontalAlignment="Left" Margin="829,94,0,0" VerticalAlignment="Top" Width="176" Foreground="#FFF7F101"/>
+        <Label x:Name="Label_public_ip_and_port" Content="Public IP Addr: " HorizontalAlignment="Left" Margin="630,114,0,0" VerticalAlignment="Top" Width="375" Foreground="#FFF7F101"/>
         <Label Content="Type Message Here" HorizontalAlignment="Left" Margin="456,206,0,0" VerticalAlignment="Top" Width="158" FontWeight="Bold" Foreground="#FFF9F303"/>
         <Button Content="Close Application" HorizontalAlignment="Left" Margin="899,456,0,0" VerticalAlignment="Top" Width="137" FontWeight="Bold" Click="Button_Click_Exit_Application"/>
         <Button Content="Begin Listening" HorizontalAlignment="Left" Margin="382,127,0,0" VerticalAlignment="Top" Width="164" Click="Button_Click_tcp_server_begin_listening" FontWeight="Bold"/>
@@ -44,5 +44,6 @@
 
             </FlowDocument>
         </RichTextBox>
+        <Label x:Name="Label_private_ip_and_port" Content="Available Private IP Addr:'s " HorizontalAlignment="Left" Margin="630,136,0,0" VerticalAlignment="Top" Width="375" Foreground="#FFF7F101"/>
     </Grid>
 </Window>

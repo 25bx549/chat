@@ -20,6 +20,7 @@ using System.Threading;
 using System.Windows.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Net;
+using System.Net.Http;
 //using static System.Net.Mime.MediaTypeNames;
 using System.Timers;
 
@@ -32,6 +33,7 @@ using System.Windows.Resources;
 using System.Windows.Markup;
 using Application = System.Windows.Application;
 using System.Reflection.Emit;
+using System.Web.UI.WebControls;
 
 namespace Chat
 {
@@ -43,9 +45,11 @@ namespace Chat
     {
 
         // https://stackoverflow.com/questions/33680398/c-sharp-wpf-how-to-simply-update-ui-from-another-class-thread
-        public static Button StatusButton;
-        public static TextBox IP_and_port_string;
-        public static TextBox TextBox_Msg;
+        public static System.Windows.Controls.Button StatusButton;
+        public static System.Windows.Controls.TextBox IP_and_port_string;
+        public static System.Windows.Controls.Label label_public_IP_and_port_string;
+        public static System.Windows.Controls.Label label_private_IP_and_port_string;
+        public static System.Windows.Controls.TextBox TextBox_Msg;
         public static RichTextBox RTB_local;
 
 
@@ -90,6 +94,10 @@ namespace Chat
 
             IP_and_port_string = tcp_client_ip_addr_port_string;
 
+            label_public_IP_and_port_string = Label_public_ip_and_port;
+
+            label_private_IP_and_port_string = Label_private_ip_and_port;
+
             TextBox_Msg = TextBox_enterMessage;
 
             RTB_local = RichTextBox_Messages;
@@ -101,7 +109,7 @@ namespace Chat
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(5);
             dispatcherTimer.Start();
-            
+
 
 
             /*
@@ -115,7 +123,72 @@ namespace Chat
             */
 
 
+            get_and_display_public_ip();
+
+            List<string> localIP = GetLocalIPAddress();
+
+            string string_for_label = "Available Private IP Addr's: ";
+
+            foreach ( string IP in localIP )
+            {
+                Console.WriteLine(" localIP: " + IP.ToString());
+
+                string_for_label = string_for_label + " " + IP.ToString();
+            }
+
+            label_private_IP_and_port_string.Content = string_for_label;
+
         }
+
+
+        static async Task get_and_display_public_ip()
+        {
+
+
+            HttpClient sharedClient = new HttpClient();
+
+            HttpResponseMessage response = await sharedClient.GetAsync("https://api.ipify.org");
+
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+            // Above three lines can be replaced with new helper method below
+            // string responseBody = await client.GetStringAsync(uri);
+
+            Console.WriteLine(responseBody);
+
+            IP_and_port_string.Text = responseBody + ",1000";
+            label_public_IP_and_port_string.Content = "Public IP Addr: " + responseBody;
+
+
+        }
+
+        public List<string> GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+
+            List<string> tempList = new List<string>();
+
+            foreach (var ip in host.AddressList)
+            {
+
+                Console.WriteLine(" current IP: " + ip);
+                
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    Console.WriteLine(" Adding IP: " + ip.ToString() + " to List<string>");
+                    tempList.Add(ip.ToString());
+                }
+
+            }
+            //throw new Exception("No network adapters with an IPv4 address in the system!");
+
+            return tempList;
+        }
+
+
+
+
+
 
         //  This is Program Entry Point based on Button Click to establish tcp connection 
         public void initiate_tcp()
