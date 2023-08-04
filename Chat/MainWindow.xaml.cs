@@ -48,13 +48,14 @@ namespace Chat
         public static System.Windows.Controls.Button StatusButton;
         public static System.Windows.Controls.TextBox IP_and_port_string;
         public static System.Windows.Controls.Label label_public_IP_and_port_string;
-        public static System.Windows.Controls.Label label_private_IP_and_port_string;
+        //public static System.Windows.Controls.Label label_private_IP_and_port_string;
+        public static System.Windows.Controls.TextBlock TextBlock_private_IP_and_port_string;
         public static System.Windows.Controls.TextBox TextBox_Msg;
         public static RichTextBox RTB_local;
 
 
         //  booleans for tracking the role specified by the user
-        public bool tcp;
+        //public bool tcp;
         public bool tcp_client;
         public bool tcp_server;
 
@@ -96,7 +97,10 @@ namespace Chat
 
             label_public_IP_and_port_string = Label_public_ip_and_port;
 
-            label_private_IP_and_port_string = Label_private_ip_and_port;
+            //label_private_IP_and_port_string = Label_private_ip_and_port;
+
+            TextBlock_private_IP_and_port_string = TextBlock_private_ip_and_port;
+
 
             TextBox_Msg = TextBox_enterMessage;
 
@@ -127,7 +131,7 @@ namespace Chat
 
             List<string> localIP = GetLocalIPAddress();
 
-            string string_for_label = "Available Private IP Addr's: ";
+            string string_for_label = "Your Available Private IP Addresses: ";
 
             foreach ( string IP in localIP )
             {
@@ -136,7 +140,9 @@ namespace Chat
                 string_for_label = string_for_label + " " + IP.ToString();
             }
 
-            label_private_IP_and_port_string.Content = string_for_label;
+            
+            //label_private_IP_and_port_string.Content = string_for_label;
+            TextBlock_private_ip_and_port.Text = string_for_label;
 
         }
 
@@ -157,7 +163,7 @@ namespace Chat
             Console.WriteLine(responseBody);
 
             IP_and_port_string.Text = responseBody + ",1000";
-            label_public_IP_and_port_string.Content = "Public IP Addr: " + responseBody;
+            label_public_IP_and_port_string.Content = "Your Public IP Address: " + responseBody;
 
 
         }
@@ -193,35 +199,38 @@ namespace Chat
         //  This is Program Entry Point based on Button Click to establish tcp connection 
         public void initiate_tcp()
         {
+
             //  collect config settings from UI to determine which of server/client to run...
-            if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            //if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            if (Checkbox_tcp_client.IsChecked == true)
             {
-                tcp = true;
+                //tcp = true;
                 tcp_client = true;
             }
-            else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            //else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            else if (Checkbox_tcp_server.IsChecked == true)
             {
-                tcp = true;
+                //tcp = true;
                 tcp_server = true;
             }
             
             //  now execute based on user-defined tcp role 
-            if (tcp == true && tcp_client == true)
+            //if (tcp == true && tcp_client == true)
+            if (tcp_client == true)
             {
                 tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
 
                 tcpInstance.initiate_connection_tcp_client();
 
             }
-            else if (tcp == true && tcp_server == true)
+            //else if (tcp == true && tcp_server == true)
+            else if (tcp_server == true)
             {
                 tcpInstance = new tcpClass("server", tcp_client_ip_addr_port_string.Text.ToString());
 
                 tcpInstance.initiate_connection_tcp_server();
 
             }
-
-
 
         }
 
@@ -868,21 +877,15 @@ namespace Chat
         private void Button_Click_Intitiate_tcp(object sender, RoutedEventArgs e)
         {
 
-
-
-
             Console.WriteLine(" launching App");
             
             initiate_tcp();
 
+            Console.WriteLine(" initiating tcpClass->receive_message()");
 
-            
+            t2 = new Thread(this.tcpInstance.receive_message);
 
-
-
-
-            
-
+            t2.Start();
 
         }
 
@@ -948,28 +951,7 @@ namespace Chat
 
         }
 
-        private void Button_Click_tcp_server_begin_listening(object sender, RoutedEventArgs e)
-        {
-
-
-            Console.WriteLine(" tcp_server - initiating tcpClass->receive_message()");
-
-
-            //t1 = new Thread(tcpInstance.send_message);
-
-            //t1.Start();
-
-
-            t2 = new Thread(this.tcpInstance.receive_message);
-
-            t2.Start();
-
-
-
-
-
-
-        }
+        
 
         private void Button_Click_Exit_Application(object sender, RoutedEventArgs e)
         {
