@@ -17,7 +17,6 @@ Initial version
 
 * Chat logs are not persisted or exported. All chat communication is deleted on close of application. 
 
-(future version) Internal LAN network communication and/or internet-based communication privacy to be provided via two user-selectable options: symmetric encryption and asymmetric encryption/PKI. 
 
 
 
@@ -26,12 +25,8 @@ Initial version
 
 
 
+Future version
 
-
-
-
-
-
-
+* Internal LAN network communication and/or internet-based communication privacy to be provided via two user-selectable options: symmetric encryption and asymmetric encryption/PKI. 
 
 
