@@ -1,10 +1,4 @@
-﻿
-
-
-
-
-
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Windows.Documents;
@@ -14,10 +8,6 @@ using System;
 using System.Windows;
 
 namespace Chat {
-
-
-
-
 
 
     public class tcpClass
@@ -94,7 +84,7 @@ namespace Chat {
         }
 
 
-        ~tcpClass() { }
+        ~tcpClass() { Console.WriteLine(Environment.NewLine + DateTime.Now + " ~tcpClass() destructor called"); }
 
 
 
