@@ -1,4 +1,7 @@
-﻿using System.Net.Sockets;
+﻿
+
+
+using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Windows.Documents;
@@ -12,6 +15,7 @@ namespace Chat {
 
     public class tcpClass
     {
+
 
         //  data
         string role { get; set; }
@@ -27,17 +31,14 @@ namespace Chat {
 
         bool result_write;
 
-
-
         public Socket handler = null;
 
         public TcpClient client = null;
 
         public TcpListener server = null;
 
-
-
         public string IP_and_Port;
+
         public string[] IP_Port_columns;
 
 
@@ -46,16 +47,9 @@ namespace Chat {
         //public IPAddress localAddr = IPAddress.Parse("192.168.0.54");  // localhost
         public IPAddress localAddr = IPAddress.Parse("69.246.226.60");  // public IP
 
-
-
-
-
-
         public Byte[] bytes = new byte[256];
 
         public String data = null;
-
-
 
         public FlowDocument myFlowDoc = new FlowDocument();
 
@@ -77,8 +71,6 @@ namespace Chat {
             client_port = ip_port_elements[1];
 
             Console.WriteLine("client_ip: " + client_ip + " client_port: " + client_port);
-
-
 
 
         }
@@ -120,12 +112,6 @@ namespace Chat {
             String data = null;
 
 
-
-
-
-
-
-
             //    t1 = new Thread( runDispatcherTimer );
 
             //    t1.Start();
@@ -134,17 +120,14 @@ namespace Chat {
         }
 
 
-        //public void runDispatcherTimer()
-        //{
 
+        // public void runDispatcherTimer()
+        // {
+        // }
 
-
-
-        //}
 
         public bool checkConnection()
         {
-
 
             bool isConnected = true;
 
@@ -172,24 +155,14 @@ namespace Chat {
 
 
 
-
-
-
-
-
-
         public bool initiate_connection_tcp_client()
         {
 
             client = new TcpClient(client_ip, Convert.ToInt32(client_port));
 
-
             MainWindow.StatusButton.Background = Brushes.Green;
 
-
             MainWindow.StatusButton.Content = "Connected!";
-
-
 
             Console.WriteLine("socket Is Connected!");
 
@@ -203,9 +176,7 @@ namespace Chat {
         public bool close_tcp_client_connection()
         {
 
-
             client.Close();
-
 
             return true;
         }
@@ -227,12 +198,11 @@ namespace Chat {
         public void send_message()
         {
 
-
             Console.WriteLine(" tcp_client - inside tcpClass->send_msg");
 
             NetworkStream stream = client.GetStream();
 
-            //var message = "Hi friends 👋!<|EOM|> ";
+            // var message = "Hi friends 👋!<|EOM|> ";
 
             string message = null;
 
@@ -243,19 +213,14 @@ namespace Chat {
 
             });
 
-
             Byte[] data = Encoding.UTF8.GetBytes(message);
-
-
 
             stream.Write(data, 0, data.Length);
 
             Console.WriteLine(" Just sent msg: " + message);
 
-
-            //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
+            //  Note: There is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
             Application.Current.Dispatcher.Invoke(() => {
-
 
                 //FlowDocument myFlowDoc = new FlowDocument();
                 //Run myRun = new Run("This is a new line");
@@ -280,21 +245,13 @@ namespace Chat {
                 }
 
                 myFlowDoc.Blocks.Add(myParagraph);
-                //myFlowDoc.Blocks.Append(myParagraph);
+                // myFlowDoc.Blocks.Append(myParagraph);
 
                 MainWindow.RTB_local.Document = myFlowDoc;
 
+                // RTB_local.AppendText(Environment.NewLine + "Msg Sent: " + message  );
 
-
-                //RTB_local.AppendText(Environment.NewLine + "Msg Sent: " + message  );
-
-                //RTB_local.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.LightGreen );
-
-
-
-
-
-
+                // RTB_local.Selection.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.LightGreen );
 
             });
 
@@ -316,6 +273,7 @@ namespace Chat {
             Application.Current.Dispatcher.Invoke(() => {
 
                 message = "HB";
+
                 message = message.TrimEnd(new char[] { '\r', '\n' });
 
             });
@@ -332,24 +290,6 @@ namespace Chat {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public void receive_message()
         {
 
@@ -357,13 +297,13 @@ namespace Chat {
 
             String data = null;
 
-            //  Get a stream object for reading and writing
-            //NetworkStream stream = client.GetStream();
+            // Get a stream object for reading and writing. 
+            // NetworkStream stream = client.GetStream();
             NetworkStream stream = client.GetStream();
 
             int i;
 
-            //  Loop to receive all the data send by the client.
+            // Loop to receive all the data send by the client.
             while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
             {
                 //  Translate data bytes to ASCII string.
@@ -373,14 +313,14 @@ namespace Chat {
                 data = data.TrimEnd(new char[] { 'r', '\n' });
                 Console.WriteLine(data);
 
-                //  Process the data sent by the client.
-                //data = data.ToUpper();
+                // Process the data sent by the client.
+                // data = data.ToUpper();
 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
 
                 if (data.Contains("HB") != true)
                 {
-                    //  note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
+                    // Note: there is a particular reason why this works yet other methods fail. Need to understand why this is the case. 
                     Application.Current.Dispatcher.Invoke(() =>
                     {
 
@@ -404,13 +344,9 @@ namespace Chat {
                         }
 
                         myFlowDoc.Blocks.Add(myParagraph);
-                        //myFlowDoc.Blocks.Append(myParagraph);
-
-
+                        // myFlowDoc.Blocks.Append(myParagraph);
 
                         MainWindow.RTB_local.Document = myFlowDoc;
-
-
 
 
                     });

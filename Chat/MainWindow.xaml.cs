@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using System.Threading.Tasks;
+using System.Threading;
+
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -12,30 +15,31 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
-using CommunityToolkit.Mvvm;
-
-using System.Net.Sockets;
-using System.Threading;
 using System.Windows.Threading;
-using System.Security.Cryptography.X509Certificates;
-using System.Net;
-using System.Net.Http;
-//using static System.Net.Mime.MediaTypeNames;
-using System.Timers;
-
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using static System.Net.Mime.MediaTypeNames;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Windows.Resources;
 using System.Windows.Markup;
-using Application = System.Windows.Application;
+
+using System.Reflection;
+using System.Runtime.InteropServices;
+
 using System.Reflection.Emit;
 using System.Web.UI.WebControls;
 
+using CommunityToolkit.Mvvm;
 
+using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
+
+using System.Security.Cryptography.X509Certificates;
+//using static System.Net.Mime.MediaTypeNames;
+using System.Timers;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using static System.Net.Mime.MediaTypeNames;
+
+using Application = System.Windows.Application;
 
 
 
@@ -43,10 +47,7 @@ using System.Web.UI.WebControls;
 namespace Chat
 {
 
-
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
+    
     public partial class MainWindow : Window
     {
 
@@ -60,12 +61,11 @@ namespace Chat
         public static RichTextBox RTB_local;
 
 
-        //  booleans for tracking the role specified by the user
+        // Bbooleans for tracking the role specified by the user.
         //public bool tcp;
         public bool tcp_client;
 
         public bool tcp_server;
-
 
         public TcpListener server = null;
 
@@ -74,7 +74,7 @@ namespace Chat
         public tcpClass tcpInstance = null;
 
 
-        //  the following are to run send_message() and receive_message() at the same time, for bi-directional messaging
+        // The following are to run send_message() and receive_message() at the same time, for bi-directional messaging.
         public static System.Threading.Thread t1;
 
         public System.Threading.Thread t2;
@@ -84,7 +84,7 @@ namespace Chat
         public bool CxnStatus = false; 
 
 
-        //  this is the intitial message in TextBox
+        // This is the intitial message in TextBox.
         // "&quot;Hi friends 👋!&lt;|EOM|&gt;&quot;"
 
         public MainWindow()
@@ -94,14 +94,14 @@ namespace Chat
 
             this.Title = "  Chat v1.0"; 
 
-            //  the following to make the UI controls accessible/updateable 
+            // The following to make the UI controls accessible/updateable.
             StatusButton = Button_CxnState;
 
             IP_and_port_string = tcp_client_ip_addr_port_string;
 
             label_public_IP_and_port_string = Label_public_ip_and_port;
 
-            //label_private_IP_and_port_string = Label_private_ip_and_port;
+            // label_private_IP_and_port_string = Label_private_ip_and_port;
 
             TextBlock_private_IP_and_port_string = TextBlock_private_ip_and_port;
 
@@ -112,20 +112,23 @@ namespace Chat
 
 
             
-            //  DispatcherTimer setup for checking state of tcp connection 
+            // DispatcherTimer setup for checking state of tcp connection.
             DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
             dispatcherTimer.Interval = TimeSpan.FromSeconds(5);
             dispatcherTimer.Start();
 
-            /*  skipping this for the DispatcherTimer instead, but leaving stub code here for now...
-            //  heartbeat timer event handler to ensure client remains connected (or detect that it is no longer connected) 
-            System.Timers.Timer heartbeatTimer = new System.Timers.Timer(5000);
-            //heartbeatTimer.Interval = 5000; //5 seconds
-            heartbeatTimer.Elapsed += heartbeatTimer_Elapsed;
-            heartbeatTimer.AutoReset = true;
-            heartbeatTimer.Enabled = true;
-            heartbeatTimer.Start();
+
+            // Skipping this for the DispatcherTimer instead, but leaving stub code here for now.
+            // Heartbeat timer event handler to ensure client remains connected (or detect that it is no longer connected).
+
+            /*
+               System.Timers.Timer heartbeatTimer = new System.Timers.Timer(5000);
+               // heartbeatTimer.Interval = 5000; //5 seconds
+               heartbeatTimer.Elapsed += heartbeatTimer_Elapsed;
+               heartbeatTimer.AutoReset = true;
+               heartbeatTimer.Enabled = true;
+               heartbeatTimer.Start();
             */
 
 
@@ -143,7 +146,7 @@ namespace Chat
             }
 
             
-            //label_private_IP_and_port_string.Content = string_for_label;
+            // label_private_IP_and_port_string.Content = string_for_label;
             TextBlock_private_ip_and_port.Text = string_for_label;
 
         }
@@ -161,7 +164,7 @@ namespace Chat
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            // Above three lines can be replaced with new helper method below
+            // Above three lines can be replaced with new helper method below.
             // string responseBody = await client.GetStringAsync(uri);
 
             Console.WriteLine(responseBody);
@@ -191,7 +194,8 @@ namespace Chat
                 }
 
             }
-            //throw new Exception("No network adapters with an IPv4 address in the system!");
+
+            // throw new Exception("No network adapters with an IPv4 address in the system!");
 
             return tempList;
         }
@@ -201,26 +205,26 @@ namespace Chat
 
 
 
-        //  This is Program Entry Point based on Button Click to establish tcp connection 
+        // This is Program Entry Point based on Button Click to establish tcp connection.
         public void initiate_tcp()
         {
 
-            //  collect config settings from UI to determine which of server/client to run...
-            //if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
+            // Collect config settings from UI to determine which of server/client to run.
+            // if (Radio_tcp.IsChecked == true && Checkbox_tcp_client.IsChecked == true)
             if (Checkbox_tcp_client.IsChecked == true)
             {
                 //tcp = true;
                 tcp_client = true;
             }
-            //else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
+            // else if (Radio_tcp.IsChecked == true && Checkbox_tcp_server.IsChecked == true)
             else if (Checkbox_tcp_server.IsChecked == true)
             {
                 //tcp = true;
                 tcp_server = true;
             }
             
-            //  now execute based on user-defined tcp role 
-            //if (tcp == true && tcp_client == true)
+            // Now execute based on user-defined tcp role.
+            // if (tcp == true && tcp_client == true)
             if (tcp_client == true)
             {
                 tcpInstance = new tcpClass("client", tcp_client_ip_addr_port_string.Text.ToString());
@@ -228,6 +232,7 @@ namespace Chat
                 tcpInstance.initiate_connection_tcp_client();
 
             }
+
             //else if (tcp == true && tcp_server == true)
             else if (tcp_server == true)
             {
@@ -244,27 +249,10 @@ namespace Chat
 
 
 
-
-
-
-
-
         //  this works. Need to understand why, versus all the other options that fail 
         //Application.Current.Dispatcher.Invoke( () =>  {
             // Code to run on the GUI thread.
         //});
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -277,7 +265,7 @@ namespace Chat
 
 
         
-        //  the following to check the state of the tcp unicast connection every five seconds
+        //  the following to check the state of the tcp unicast connection every five seconds.
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
 
@@ -316,7 +304,7 @@ namespace Chat
 
             }
 
-            // Forcing the CommandManager to raise the RequerySuggested event
+            // Forcing the CommandManager to raise the RequerySuggested event.
             CommandManager.InvalidateRequerySuggested();
         }
         
@@ -357,21 +345,14 @@ namespace Chat
 
                     timer.Stop(); // Stop the timer that fired the event
 
-
-                    
-
                     //heartbeatTimer.AutoReset = false;
 
                     //client.Disconnect();
 
                     //server.Stop();
 
-
-
                 }
-
             }
-
         }
         */
 
