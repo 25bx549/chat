@@ -11,12 +11,6 @@ Initial version
 
 * udp multicast only for internal LAN-based use, not recommended over internet (not yet supported). 
 
-* App is not cloud-based and does not write to any database. 
-
-* There is no user login, user tracking or telemetry. 
-
-* Chat logs are not persisted or exported. All chat communication is deleted on close of application. 
-
 
 
 
